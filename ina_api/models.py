@@ -43,3 +43,8 @@ class Group(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     member_count = models.IntegerField(default=0)
     public = models.BooleanField(default=True)
+
+class Member(models.Model):
+    status = models.BooleanField(default=False)
+    messsage = models.CharField()
+
