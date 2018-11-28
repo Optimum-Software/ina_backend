@@ -17,5 +17,18 @@ urlpatterns = [
 	#GROUP
 	path('deleteGroupByName/<slug:group_name>', GroupController.deleteGroupByName, name='deleteGroupByName'),
 
+	#MEMBER
+	path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
+
+	#MEMBER
+	path('deleteMember/<int:group_id>/<int:user_id>', MemberController.deleteMember, name='deleteMember'),
+
+	#MEMBER
+	path('createMember/<int:group_id>/<int:user_id>', MemberController.createMember, name='createMember'),
+
+
+
+
+
 
 ]
