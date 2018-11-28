@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class User(models.Model):
     email = models.CharField(max_length=50, unique=True)
     first_name = models.CharField(max_length=200)
@@ -30,6 +31,46 @@ class User(models.Model):
             "profilePhotoPath": self.profile_photo_path,
             "createdAt": self.created_at
         }
+
+
+class Group(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    desc = models.TextField(max_length=2000)
+    photo_path = models.CharField(max_length=1000)
+    created_at = models.DateTimeField(auto_now=True)
+    member_count = models.IntegerField(default=0)
+    public = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return {
+            "name": self.name,
+            "desc": self.desc,
+            "photo_path": self.photo_path,
+            "created_at": self.created_at,
+            "member_count": self.member_count,
+            "public": self.public,
+
+        }
+
+class Member(models.Model):
+    status = models.BooleanField(default=False)
+    messsage = models.CharField()
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.group, self.user)
+
+    def __repr__(self):
+        return {
+            "project": self.group,
+            "user": self.user
+        }
+
+
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
@@ -154,6 +195,17 @@ class Device(models.Model):
             "device_name": self.device_name
         }
 
+class Tag(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return {
+            "name": self.name
+        }
+
 class User_Tag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -180,13 +232,3 @@ class Project_Tag(models.Model):
             "project": self.project
         }
 
-class Tag(models.Model):
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return {
-            "name": self.name
-        }
