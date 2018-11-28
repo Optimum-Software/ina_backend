@@ -1,8 +1,7 @@
 from django.urls import path
-from .controllers import DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController
+from .controllers import DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
 
 urlpatterns = [
-<<<<<<< HEAD
 	#DEVICE
 	path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
 
