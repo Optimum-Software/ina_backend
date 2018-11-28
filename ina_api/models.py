@@ -41,9 +41,34 @@ class Group(models.Model):
     member_count = models.IntegerField(default=0)
     public = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return {
+            "name": self.name,
+            "desc": self.desc,
+            "photo_path": self.photo_path,
+            "created_at": self.created_at,
+            "member_count": self.member_count,
+            "public": self.public,
+
+        }
+
 class Member(models.Model):
     status = models.BooleanField(default=False)
     messsage = models.CharField()
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.group, self.user)
+
+    def __repr__(self):
+        return {
+            "project": self.group,
+            "user": self.user
+        }
 
 
 
