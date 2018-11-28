@@ -79,6 +79,7 @@ DATABASES = {
         'NAME': 'ina',      #name of db
         'HOST': 'localhost',#name of hosting
         'USER': 'root',     #name of user
+        'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES'}
     },
 }
 
