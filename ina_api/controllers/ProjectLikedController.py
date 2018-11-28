@@ -6,5 +6,5 @@ import json
 from ina_api.models import *
 
 @require_http_methods(['GET'])
-def getProjectLiked(request):
+def getProjectLikedById(request):
     return JsonResponse({}, safe=True)
