@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 @require_http_methods(['GET'])
 def getGroupById(request):
-    return JsonResponse({}, safe=True)@require_http_methods(['GET'])
+    return JsonResponse({}, safe=True)
 
 @require_http_methods(['GET'])
 def getGroupByName(request):
