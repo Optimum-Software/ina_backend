@@ -1,5 +1,5 @@
 from django.urls import path
-from ina_api.controllers import *
+from .controllers import DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController
 
 urlpatterns = [
 	#DEVICE
@@ -11,11 +11,14 @@ urlpatterns = [
 	#GROUPADMIN
 	path('getGroupAdminById/<int:id>', GroupAdminController.getGroupAdminById, name="groupAdminById"),
 
+	#PROJECT
+	path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
+
 	#PROJECTADMIN
 	path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
 
 	#PROJECTFAVORITE
-	path('getProjectFavoriteById/<int:id>', FileController.getFileById, name="fileById"),
+	path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
 
 	#PROJECTFOLLOWED
 	path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
@@ -34,6 +37,4 @@ urlpatterns = [
 
 	#USERTAG
 	path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
-
-
 ]

@@ -57,7 +57,7 @@ class Group(models.Model):
 
 class Member(models.Model):
     status = models.BooleanField(default=False)
-    messsage = models.CharField()
+    messsage = models.TextField(max_length=1000)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
