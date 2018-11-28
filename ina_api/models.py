@@ -130,3 +130,105 @@ class Project_Admin(models.Model):
             "user": self.user
         }
 
+class File(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    path = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return '{} : {}'.format(self.project, self.path)
+
+    def __repr__(self):
+        return {
+            "project": self.project,
+            "path": self.path
+        }
+
+class Project_Liked(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.project, self.user)
+
+    def __repr__(self):
+        return {
+            "project": self.project,
+            "user": self.user
+        }
+
+class Project_Favorite(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.project, self.user)
+
+    def __repr__(self):
+        return {
+            "project": self.project,
+            "user": self.user
+        }
+
+class Project_Followed(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.project, self.user)
+
+    def __repr__(self):
+        return {
+            "project": self.project,
+            "user": self.user
+        }
+
+class Device(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    device_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{} : {}'.format(self.user, self.device_name)
+
+    def __repr__(self):
+        return {
+            "user": self.user,
+            "device_name": self.device_name
+        }
+
+class Tag(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return {
+            "name": self.name
+        }
+
+class User_Tag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.tag, self.user)
+
+    def __repr__(self):
+        return {
+            "tag": self.tag,
+            "user": self.user
+        }
+
+class Project_Tag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.tag, self.project)
+
+    def __repr__(self):
+        return {
+            "tag": self.tag,
+            "project": self.project
+        }
+
