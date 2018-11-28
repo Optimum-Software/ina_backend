@@ -9,13 +9,8 @@ class User(models.Model):
     password = models.CharField(max_length=200)
     salt = models.CharField(max_length=50, null=True)
     mobile = models.CharField(max_length=22)
-<<<<<<< HEAD
-    organisation = models.CharField(max_length=100)  # optional, example: Hanzehogeschool Groningen
-    function = models.CharField(max_length=100)  # optional, example: Docent Software Engineering
-=======
     organisation = models.CharField(max_length=200) #optional, example: Hanzehogeschool Groningen
     function = models.CharField(max_length=200)     #optional, example: Docent Software Engineering
->>>>>>> refs/remotes/upstream/master
     profile_photo_path = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now=True)
 
@@ -33,13 +28,9 @@ class User(models.Model):
             "mobile": self.mobile,
             "organisation": self.organisation,
             "function": self.function,
-<<<<<<< HEAD
-            "profilePhotoPath": self.profile_photo_path
+            "profilePhotoPath": self.profile_photo_path,
+            "createdAt": self.created_at
         }
-
-
-class Project(models.Model):
-    name
 
 
 class Group(models.Model):
@@ -54,10 +45,7 @@ class Member(models.Model):
     status = models.BooleanField(default=False)
     messsage = models.CharField()
 
-=======
-            "profilePhotoPath": self.profile_photo_path,
-            "createdAt": self.created_at
-        }
+
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
@@ -116,4 +104,4 @@ class Project_Admin(models.Model):
             "project": self.project,
             "user": self.user
         }
->>>>>>> refs/remotes/upstream/master
+
