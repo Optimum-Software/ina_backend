@@ -11,8 +11,9 @@ from django.views.decorators.http import require_http_methods
 def getUserTagById(request,id):
     try:
         userTagObject = User_Tag.objects.get(pk=id)
-        TagObject = serializers.serialize('json', [ Tag.objects.get(pk=userTagObject.tag.pk), ])
-        userTagObject = serializers.serialize('json', [ userTagObject, ])
-        return JsonResponse({"bool": True, "msg": "UserTag did exist", "userTag": userTagObject, "Tag": TagObject}, safe=True)
+        tagObject = userTagObject.tag.__repr__()
+        userObject = userTagObject.user.__repr__()
+        userTagjson = serializers.serialize('json', [ userTagObject, ])
+        return JsonResponse({"bool": True, "msg": "UserTag did exist", "userTag": userTagjson, "tag": tagObject, "user": userObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "UserTag did not exist"}, safe=True)
