@@ -4,24 +4,27 @@ from .controllers import DeviceController, FileController, GroupAdminController,
 urlpatterns = [
 	#DEVICE
 	path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
+	path('createDevice', DeviceController.createDevice, name="createDevice"), #Fields: userId, deviceName
+	path('deleteDeviceById', DeviceController.deleteDeviceById, name="deleteDeviceById"), #Fields: id
 
 	#FILE
 	path('getFileById/<int:id>', FileController.getFileById, name="fileById"),
 
 	#GROUP
-	path('getGroupById/<int:user_id>', GroupController.getGroupById, name='GroupById'),
+	path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
 	path('getGroupByName/<slug:group_name>', GroupController.getGroupByName, name='GroupByName'),
 	path('createGroup', GroupController.createGroup, name='createGroup'),
-	path('deleteGroupById/<int:group_id>', GroupController.deleteGroupById, name='deleteGroupById'),
-	path('deleteGroupByName/<slug:group_name>', GroupController.deleteGroupByName, name='deleteGroupByName'),
+	path('deleteGroupById', GroupController.deleteGroupById, name='deleteGroupById'),
+	path('deleteGroupByName', GroupController.deleteGroupByName, name='deleteGroupByName'),
 
 	#GROUPADMIN
 	path('getGroupAdminById/<int:id>', GroupAdminController.getGroupAdminById, name="groupAdminById"),
 
 	#MEMBER
 	path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
-	path('deleteMember/<int:group_id>/<int:user_id>', MemberController.deleteMember, name='deleteMember'),
-	path('createMember/<int:group_id>/<int:user_id>', MemberController.createMember, name='createMember'),
+	path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
+	path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
+	path('createMember', MemberController.createMember, name='createMember'),
 
 	#PROJECT
 	path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
@@ -45,7 +48,9 @@ urlpatterns = [
 	path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
 
 	#USER
-	path('getUserById/<int:id>', UserController.getUserById, name='userById'),
+	path('getUserById/<int:id>', UserController.getUserById, name="userById"),
+	path('createUser', UserController.createUser, name="createUser"), #Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
+	path('deleteUser', UserController.deleteUser, name="deleteUser"), #Fields: id
 
 	#USERTAG
 	path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
