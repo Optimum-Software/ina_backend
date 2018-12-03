@@ -23,8 +23,8 @@ urlpatterns = [
 	#MEMBER
 	path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
 	path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
-	path('deleteMemberById/<int:group_id>/<int:user_id>', MemberController.deleteMember, name='deleteMember'),
-	path('createMemberById/<int:group_id>/<int:user_id>', MemberController.createMember, name='createMember'),
+	path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
+	path('createMember', MemberController.createMember, name='createMember'),
 
 	#PROJECT
 	path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
@@ -50,6 +50,7 @@ urlpatterns = [
 	#USER
 	path('getUserById/<int:id>', UserController.getUserById, name="userById"),
 	path('createUser', UserController.createUser, name="createUser"), #Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
+	path('deleteUser', UserController.deleteUser, name="deleteUser"), #Fields: id
 
 	#USERTAG
 	path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
