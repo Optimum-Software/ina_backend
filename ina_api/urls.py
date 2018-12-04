@@ -1,7 +1,24 @@
 from django.urls import path
-from .controllers import DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
+from django.conf.urls import url
+from rest_framework.authtoken.views import obtain_auth_token
+
+from .controllers import LoginController, DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
 
 urlpatterns = [
+	#Authentication tutorial 
+	path('auth/login/',
+        obtain_auth_token,
+        name='auth_user_login'),
+    path('auth/register/',
+        LoginController.CreateUserAPIView.as_view(),
+        name='auth_user_create'),
+    path('auth/logout/',
+        LoginController.LogoutUserAPIView.as_view(),
+        name='auth_user_logout'),
+	
+	#BESTE FUNCTIE OOIT
+	path('test/', UserController.test, name="test"),
+		
 	#DEVICE
 	path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
 
