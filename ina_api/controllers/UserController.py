@@ -26,7 +26,7 @@ def createUser(request):
                           organisation=data['organisation'], function=data['function'],
                           profile_photo_path=data['profilePhotoPath'])
         userObject.save()
-        
+
         return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Could not create entry"}, safe=True)
