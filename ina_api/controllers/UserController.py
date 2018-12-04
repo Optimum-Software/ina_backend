@@ -7,32 +7,49 @@ import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 
+
 @require_http_methods(['GET'])
-def getUserById(request,id):
+def getUserById(request, id):
     try:
         userObject = User.objects.get(pk=id).__repr__()
         return JsonResponse({"bool": True, "msg": "User did exist", "user": userObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
 
+
 @require_http_methods(['POST'])
 def createUser(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        if( data['email'] == '' or
-            data['password'] == '' or
-            data['firstName'] == '' or
-            data['lastName'] == '' or
-            data['mobile'] == ''):
-            return JsonResponse({"bool": False, "msg": "Please fill in all required fields"}, safe=True)
-        try:
-            userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'], last_name=data['lastName'], bio=data['bio'], mobile=data['mobile'], organisation=data['organisation'], function=data['function'])
-            userObject.save()
-            return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk}, safe=True)
-        except:
-            return JsonResponse({"bool": False, "msg": "Could not create entry"}, safe=True)
+        userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'],
+                          last_name=data['lastName'], bio=data['bio'], mobile=data['mobile'],
+                          organisation=data['organisation'], function=data['function'],
+                          profile_photo_path=data['profilePhotoPath'])
+        userObject.save()
+
+        return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Please send all required fields"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Could not create entry"}, safe=True)
+
+
+@require_http_methods(['PUT'])
+def updateUser(request):
+    data = json.loads(request.body.decode('utf8'))
+
+    try:
+        userObject = User.objects.get(pk=data['id'])
+    except:
+        return JsonResponse({"bool": False, "msg": "User with id [" + str(data['id']) + "] does not exist"}, safe=True)
+    try:
+        userObject.bio = data['bio']
+        userObject.organisation = data['organisation']
+        userObject.function = data['function']
+        userObject.save()
+
+        return JsonResponse({"bool": True, "msg": "User entry updated"}, safe=True)
+    except:
+        return JsonResponse({"bool": False, "msg": "User entry could not be updated"}, safe=True)
+
 
 @require_http_methods(['DELETE'])
 def deleteUser(request):
@@ -40,7 +57,7 @@ def deleteUser(request):
     try:
         userObject = User.objects.get(pk=data['id'])
     except:
-        return JsonResponse({"bool": False, "msg": "User with id [" + str(data['id']) + "] did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "User with id [" + str(data['id']) + "] does not exist"}, safe=True)
     try:
         userObject.delete()
         return JsonResponse({"bool": True, "msg": "User entry deleted"}, safe=True)
