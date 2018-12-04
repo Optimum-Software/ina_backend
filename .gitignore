@@ -69,5 +69,5 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 #Django
-./ina_api/__pycache__
-./ina_backend/__pycache__
+__pycache__/
+*.py[cod]
