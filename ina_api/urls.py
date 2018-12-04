@@ -1,9 +1,23 @@
 from django.urls import path
-from .controllers import DeviceController, FileController, GroupAdminController, ProjectAdminController, \
+from rest_framework.authtoken.views import obtain_auth_token
+
+from .controllers import LoginController, DeviceController, FileController, GroupAdminController, ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
     ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
 
 urlpatterns = [
+	#Authentication tutorial 
+	path('login/',
+        LoginController.LoginUser.as_view(),
+        name='auth_user_login'),
+
+    path('logout/',
+        LoginController.LogoutUser.as_view(),
+        name='auth_user_logout'),
+	
+	#BESTE FUNCTIE OOIT
+	path('test/', UserController.test, name="test"),
+
     # DEVICE
     path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
     path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceName
@@ -52,7 +66,7 @@ urlpatterns = [
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
-    path('createUser', UserController.createUser, name="createUser"),
+    path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
     # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
