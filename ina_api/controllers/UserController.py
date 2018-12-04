@@ -8,6 +8,10 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from ..serializers import CreateUserSerializer
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
+from django.db import IntegrityError
 
 
 @require_http_methods(['GET'])
@@ -31,19 +35,33 @@ def test(request):
         print(message)
         
 
-@require_http_methods(['POST'])
-def createUser(request):
-    data = json.loads(request.body.decode('utf-8'))
-    try:
-        userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'],
-                          last_name=data['lastName'], bio=data['bio'], mobile=data['mobile'],
-                          organisation=data['organisation'], function=data['function'],
-                          profile_photo_path=data['profilePhotoPath'])
-        userObject.save()
+class CreateUserAPIView(CreateAPIView):
+    serializer_class = CreateUserSerializer
+    permission_classes = [AllowAny]
+    def create(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+                
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            # We create a token than will be used for future auth
+            token = Token.objects.create(user=serializer.instance)
+            token_data = {"token": token.key}
 
-        return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk}, safe=True)
-    except:
-        return JsonResponse({"bool": False, "msg": "Could not create entry"}, safe=True)
+            try:
+                userObject = User(pk=serializer.instance.pk, email=data['username'], password=data['password'], first_name=data['firstName'],
+                                last_name=data['lastName'], bio=data['bio'], mobile=data['mobile'],
+                                organisation=data['organisation'], function=data['function'],
+                                profile_photo_path=data['profilePhotoPath'])
+                userObject.save()
+
+                return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk,}, safe=True)
+            except:
+                return JsonResponse({"bool": False, "msg": "Could not create user"}, safe=True)
+        except IntegrityError as e:
+            return JsonResponse({"bool": False, "msg": "Could not create user"}, safe=True)
 
 
 @require_http_methods(['PUT'])

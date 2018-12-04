@@ -7,14 +7,12 @@ from .controllers import LoginController, DeviceController, FileController, Grou
 
 urlpatterns = [
 	#Authentication tutorial 
-	path('auth/login/',
-        obtain_auth_token,
+	path('login/',
+        LoginController.LoginUser.as_view(),
         name='auth_user_login'),
-    path('auth/register/',
-        LoginController.CreateUserAPIView.as_view(),
-        name='auth_user_create'),
-    path('auth/logout/',
-        LoginController.LogoutUserAPIView.as_view(),
+
+    path('logout/',
+        LoginController.LogoutUser.as_view(),
         name='auth_user_logout'),
 	
 	#BESTE FUNCTIE OOIT
@@ -68,7 +66,7 @@ urlpatterns = [
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
-    path('createUser', UserController.createUser, name="createUser"),
+    path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
     # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id

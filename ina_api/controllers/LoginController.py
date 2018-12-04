@@ -5,29 +5,27 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from ina_api.models import *
 from ..serializers import CreateUserSerializer
+import json
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.db import IntegrityError
+
+class LoginUser(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)
+            return JsonResponse({"bool": True, "msg": "User successfully logged in", "token": token.key,}, safe=True)
+        else:
+            return JsonResponse({"bool": False, "msg": "User credentials not valid",}, safe=True)
 
 
-class CreateUserAPIView(CreateAPIView):
-    serializer_class = CreateUserSerializer
-    permission_classes = [AllowAny]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        # We create a token than will be used for future auth
-        token = Token.objects.create(user=serializer.instance)
-        token_data = {"token": token.key}
-        return Response(
-            {**serializer.data, },
-            status=status.HTTP_201_CREATED,
-            headers=headers
-        )
-
-
-class LogoutUserAPIView(APIView):
+class LogoutUser(APIView):
     queryset = get_user_model().objects.all()
 
     def get(self, request, format=None):
