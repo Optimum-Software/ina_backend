@@ -1,8 +1,9 @@
 from django.urls import path
-from django.conf.urls import url
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .controllers import LoginController, DeviceController, FileController, GroupAdminController, ProjectAdminController, ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
+from .controllers import LoginController, DeviceController, FileController, GroupAdminController, ProjectAdminController, \
+    ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
 
 urlpatterns = [
 	#Authentication tutorial 
@@ -18,52 +19,60 @@ urlpatterns = [
 	
 	#BESTE FUNCTIE OOIT
 	path('test/', UserController.test, name="test"),
-		
-	#DEVICE
-	path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
 
-	#FILE
-	path('getFileById/<int:id>', FileController.getFileById, name="fileById"),
+    # DEVICE
+    path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
+    path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceName
+    path('deleteDeviceById', DeviceController.deleteDeviceById, name="deleteDeviceById"),  # Fields: id
 
-	#GROUP
-	path('getGroupById/<int:user_id>', GroupController.getGroupById, name='GroupById'),
-	path('getGroupByName/<slug:group_name>', GroupController.getGroupByName, name='GroupByName'),
-	path('createGroup', GroupController.createGroup, name='createGroup'),
-	path('deleteGroupById/<int:group_id>', GroupController.deleteGroupById, name='deleteGroupById'),
-	path('deleteGroupByName/<slug:group_name>', GroupController.deleteGroupByName, name='deleteGroupByName'),
+    # FILE
+    path('getFileById/<int:id>', FileController.getFileById, name="fileById"),
 
-	#GROUPADMIN
-	path('getGroupAdminById/<int:id>', GroupAdminController.getGroupAdminById, name="groupAdminById"),
+    # GROUP
+    path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
+    path('getGroupByName/<slug:group_name>', GroupController.getGroupByName, name='GroupByName'),
+    path('createGroup', GroupController.createGroup, name='createGroup'),
+    path('deleteGroupById', GroupController.deleteGroupById, name='deleteGroupById'),
+    path('deleteGroupByName', GroupController.deleteGroupByName, name='deleteGroupByName'),
 
-	#MEMBER
-	path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
-	path('deleteMember/<int:group_id>/<int:user_id>', MemberController.deleteMember, name='deleteMember'),
-	path('createMember/<int:group_id>/<int:user_id>', MemberController.createMember, name='createMember'),
+    # GROUPADMIN
+    path('getGroupAdminById/<int:id>', GroupAdminController.getGroupAdminById, name="groupAdminById"),
 
-	#PROJECT
-	path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
+    # MEMBER
+    path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
+    path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
+    path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
+    path('createMember', MemberController.createMember, name='createMember'),
 
-	#PROJECTADMIN
-	path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
+    # PROJECT
+    path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
 
-	#PROJECTFAVORITE
-	path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
+    # PROJECTADMIN
+    path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
 
-	#PROJECTFOLLOWED
-	path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
+    # PROJECTFAVORITE
+    path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
 
-	#PROJECTLIKED
-	path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
+    # PROJECTFOLLOWED
+    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById,
+         name="projectFollowedById"),
 
-	#PROJECTTAG
-	path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
+    # PROJECTLIKED
+    path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
 
-	#TAG
-	path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
+    # PROJECTTAG
+    path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
 
-	#USER
-	path('getUserById/<int:id>', UserController.getUserById, name='userById'),
+    # TAG
+    path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
 
-	#USERTAG
-	path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
+    # USER
+    path('getUserById/<int:id>', UserController.getUserById, name="userById"),
+    path('createUser', UserController.createUser, name="createUser"),
+    path('updateUser', UserController.updateUser, name="updateUser"),
+    # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
+    path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
+
+    # USERTAG
+    path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
 ]

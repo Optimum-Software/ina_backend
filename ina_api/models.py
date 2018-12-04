@@ -19,12 +19,11 @@ class User(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "email": self.email,
             "firstName": self.first_name,
-            "lastName": self.lastName,
+            "lastName": self.last_name,
             "bio": self.bio,
-            "password": self.password,
-            "salt": self.salt,
             "mobile": self.mobile,
             "organisation": self.organisation,
             "function": self.function,
@@ -46,6 +45,7 @@ class Group(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "name": self.name,
             "desc": self.desc,
             "photo_path": self.photo_path,
@@ -66,6 +66,7 @@ class Member(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.group,
             "user": self.user
         }
@@ -94,6 +95,7 @@ class Project(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "name": self.name,
             "desc": self.desc,
             "startDate": self.start_date,
@@ -113,6 +115,7 @@ class Group_Admin(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "group": self.group,
             "user": self.user
         }
@@ -126,6 +129,7 @@ class Project_Admin(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.project,
             "user": self.user
         }
@@ -139,6 +143,7 @@ class File(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.project,
             "path": self.path
         }
@@ -152,6 +157,7 @@ class Project_Liked(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.project,
             "user": self.user
         }
@@ -165,6 +171,7 @@ class Project_Favorite(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.project,
             "user": self.user
         }
@@ -178,6 +185,7 @@ class Project_Followed(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "project": self.project,
             "user": self.user
         }
@@ -191,6 +199,7 @@ class Device(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "user": self.user,
             "device_name": self.device_name
         }
@@ -203,6 +212,7 @@ class Tag(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "name": self.name
         }
 
@@ -215,6 +225,7 @@ class User_Tag(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "tag": self.tag,
             "user": self.user
         }
@@ -228,6 +239,7 @@ class Project_Tag(models.Model):
 
     def __repr__(self):
         return {
+            "id": self.pk,
             "tag": self.tag,
             "project": self.project
         }
