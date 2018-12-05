@@ -1,22 +1,23 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .controllers import LoginController, DeviceController, FileController, GroupAdminController, ProjectAdminController, \
+from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
+    ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
     ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
 
 urlpatterns = [
-	#Authentication tutorial 
-	path('login/',
-        LoginController.LoginUser.as_view(),
-        name='auth_user_login'),
+    # Authentication tutorial
+    path('login',
+         LoginController.LoginUser.as_view(),
+         name='auth_user_login'),
 
-    path('logout/',
-        LoginController.LogoutUser.as_view(),
-        name='auth_user_logout'),
-	
-	#BESTE FUNCTIE OOIT
-	path('test/', UserController.test, name="test"),
+    path('logout',
+         LoginController.LogoutUser.as_view(),
+         name='auth_user_logout'),
+
+    # BESTE FUNCTIE OOIT
+    path('test/', UserController.test, name="test"),
 
     # DEVICE
     path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
