@@ -50,7 +50,7 @@ urlpatterns = [
 	#USER
 	path('getUserById/<int:id>', UserController.getUserById, name="userById"),
 	path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
-	path('createUser', UserController.createUser, name="createUser"), #Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
+	path('createUser', UserController.createUser, name="createUser"), #Fields: email, password, firstName, lastName, mobile
 	path('deleteUser', UserController.deleteUser, name="deleteUser"), #Fields: id
 
 	#USERTAG

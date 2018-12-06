@@ -40,7 +40,7 @@ def createUser(request):
             data['mobile'] == ''):
             return JsonResponse({"bool": False, "msg": "Please fill in all required fields"}, safe=True)
         try:
-            userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'], last_name=data['lastName'], bio=data['bio'], mobile=data['mobile'], organisation=data['organisation'], function=data['function'])
+            userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'], last_name=data['lastName'], mobile=data['mobile'])
             userObject.save()
             return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk}, safe=True)
         except:
