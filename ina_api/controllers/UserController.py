@@ -15,6 +15,14 @@ def getUserById(request,id):
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
 
+@require_http_methods(['GET'])
+def getUserByEmail(request, email):
+    try:
+        userObject = User.objects.get(email=email).__repr__()
+        return JsonResponse({"bool": True, "msg": "User did exist", "user": userObject}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
+
 @require_http_methods(['POST'])
 def createUser(request):
     data = json.loads(request.body.decode('utf-8'))
