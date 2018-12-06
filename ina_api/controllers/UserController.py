@@ -15,13 +15,19 @@ def getUserById(request,id):
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
 
-@require_http_methods(['GET'])
-def getUserByEmail(request, email):
+@require_http_methods(['POST']) #is post because you cant put email address in url for GET request
+def getUserByEmail(request):
+    data = json.loads(request.body.decode('utf-8'))
     try:
-        userObject = User.objects.get(email=email).__repr__()
-        return JsonResponse({"bool": True, "msg": "User did exist", "user": userObject}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
+        if( data['email'] == ''):
+            return JsonResponse({"bool": False, "msg": "Please fill in all required fields"}, safe=True)
+        try:
+            userObject = User.objects.get(email=data['email']).__repr__()
+            return JsonResponse({"bool": True, "msg": "User did exist", "user": userObject}, safe=True)
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "User did not exist"}, safe=True)
+    except:
+        return JsonResponse({"bool": False, "msg": "Please send all required fields"}, safe=True)
 
 @require_http_methods(['POST'])
 def createUser(request):
