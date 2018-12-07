@@ -70,5 +70,7 @@ fabric.properties
 
 #Django
 __pycache__/
+.ina_api/__pycache__/
+.ina_api/controllers/__pycache__/
 *.py[cod]
 
