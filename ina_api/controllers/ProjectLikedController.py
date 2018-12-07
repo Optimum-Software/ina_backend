@@ -14,6 +14,6 @@ def getProjectLikedById(request, id):
         userObject = projectLikedObject.user.__repr__()
         projectObject = projectLikedObject.project.__repr__()
         projectLikedJson = serializers.serialize('json', [ projectLikedObject, ])
-        return JsonResponse({"bool": True, "msg": "ProjectLiked did exist", "projectLiked": projectLikedJson, "user": userObject, "project": projectObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "ProjectLiked bestaat", "projectLiked": projectLikedJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectLiked did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "ProjectLiked bestaat niet"}, safe=True)

@@ -11,6 +11,6 @@ from django.core import serializers
 def getFileById(request, id):
     try:
         fileObject = File.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "File did exist", "file": fileObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "File bestaat", "file": fileObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "File did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "File bestaat niet"}, safe=True)

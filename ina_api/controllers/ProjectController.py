@@ -11,6 +11,6 @@ from django.core import serializers
 def getProjectById(request, id):
     try:
         projectObject = Project.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "Project did exist", "project": projectObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Project bestaat", "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "Project did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)

@@ -13,6 +13,6 @@ def getProjectAdminById(request, id):
         userObject = projectAdminObject.user.__repr__()
         projectObject = projectAdminObject.project.__repr__()
         projectAdminJson = serializers.serialize('json', [ projectAdminObject, ])
-        return JsonResponse({"bool": True, "msg": "ProjectAdmin did exist", "ProjectAdmin": projectAdminJson, "user": userObject, "project": projectObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "ProjectAdmin bestaat", "ProjectAdmin": projectAdminJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectAdmin did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "ProjectAdmin bestaat niet"}, safe=True)

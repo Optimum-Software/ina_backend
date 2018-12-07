@@ -14,6 +14,6 @@ def getUserTagById(request,id):
         tagObject = userTagObject.tag.__repr__()
         userObject = userTagObject.user.__repr__()
         userTagjson = serializers.serialize('json', [ userTagObject, ])
-        return JsonResponse({"bool": True, "msg": "UserTag did exist", "userTag": userTagjson, "tag": tagObject, "user": userObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Usertag bestaat", "userTag": userTagjson, "tag": tagObject, "user": userObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "UserTag did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "UserTag bestaat niet"}, safe=True)

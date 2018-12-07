@@ -13,6 +13,6 @@ def getGroupAdminById(request, id):
         userObject = groupAdminObject.user.__repr__()
         groupObject = groupAdminObject.group.__repr__()
         groupAdminJson = serializers.serialize('json', [ groupAdminObject, ])
-        return JsonResponse({"bool": True, "msg": "GroupAdmin did exist", "groupAdmin": groupAdminJson, "user": userObject, "group": groupObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "GroupAdmin bestaat", "groupAdmin": groupAdminJson, "user": userObject, "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "GroupAdmin did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "GroupAdmin bestaat niet"}, safe=True)

@@ -14,6 +14,6 @@ def getProjectFollowedById(request, id):
         userObject = projectFollowedObject.user.__repr__()
         projectObject = projectFollowedObject.project.__repr__()
         projectFollowedJson = serializers.serialize('json', [ projectFollowedObject, ])
-        return JsonResponse({"bool": True, "msg": "ProjectFollowed did exist", "projectFollowed": projectFollowedJson, "user": userObject, "project": projectObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "ProjectFollowed bestaat", "projectFollowed": projectFollowedJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectFollowed did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "ProjectFollowed bestaat niet"}, safe=True)
