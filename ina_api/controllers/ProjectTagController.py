@@ -14,6 +14,6 @@ def getProjectTagById(request, id):
         tabObject = projectTagObject.tag.__repr__()
         projectObject = projectTagObject.project.__repr__()
         projectTagJson = serializers.serialize('json', [ projectTagObject, ])
-        return JsonResponse({"bool": True, "msg": "ProjectTag did exist", "projectTag": projectTagJson, "tag": tabObject, "project": projectObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "ProjectTag bestaat", "projectTag": projectTagJson, "tag": tabObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectTag did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "ProjectTag bestaat niet"}, safe=True)

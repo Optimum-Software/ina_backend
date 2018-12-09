@@ -11,6 +11,6 @@ from django.views.decorators.http import require_http_methods
 def getTagById(request, id):
     try:
         tagObject = Tag.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "Tag did exist", "Tag": tagObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Tag bestaat", "Tag": tagObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "Tag did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Tag bestaat niet"}, safe=True)

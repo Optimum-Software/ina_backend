@@ -10,9 +10,9 @@ from django.core import serializers
 def getGroupById(request, id):
     try:
         groupObject = Group.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "Group did exist", "group": groupObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Groep bestaat", "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "Group did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
 
 @require_http_methods(['GET'])
 def getGroupByName(request):
@@ -25,16 +25,16 @@ def createGroup(request):
         if( data['name'] == '' or
             data['desc'] == '' or
             data['public'] == ''):
-            return JsonResponse({"bool": False, "msg": "Please fill in all required fields"}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Vul alle verplichte velden in aub"}, safe=True)
         try:
             #photo_path gotten later by setGroupImg
             groupObject = Group(name=data['name'], desc=data['desc'], photo_path=[''], member_count=0, public=data['public'])
             groupObject.save()
-            return JsonResponse({"bool": True, "msg": "Group entry created", "id": groupObject.pk}, safe=True)
+            return JsonResponse({"bool": True, "msg": "Groep aangemaakt", "id": groupObject.pk}, safe=True)
         except:
-            return JsonResponse({"bool": False, "msg": "Could not create entry"}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Kon groep niet aanmaken"}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Please send all required fields"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Stuur alle verplichte velden in aub"}, safe=True)
 
 @require_http_methods(['DELETE'])
 def deleteGroupById(request):
@@ -42,12 +42,12 @@ def deleteGroupById(request):
     try:
         groupObject = Group.objects.get(pk=data['id'])
     except:
-        return JsonResponse({"bool": False, "msg": "Group with id [" + str(data['id']) + "] did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
     try:
         groupObject.delete()
-        return JsonResponse({"bool": True, "msg": "Group entry deleted"}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Groep verwijderd"}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Group entry could not be deleted"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Kon groep niet verwijderen"}, safe=True)
 
 @require_http_methods(['DELETE'])
 def deleteGroupByName(request):
@@ -55,9 +55,9 @@ def deleteGroupByName(request):
     try:
         groupObject = Group.objects.get(name=str(data['name']))
     except:
-        return JsonResponse({"bool": False, "msg": "Group with name [" + str(data['name']) + "] did not exist"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
     try:
         groupObject.delete()
-        return JsonResponse({"bool": True, "msg": "Group entry deleted"}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Groep verwijderd"}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Group entry could not be deleted"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Kon groep niet verwijderen"}, safe=True)

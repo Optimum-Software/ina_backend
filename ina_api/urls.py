@@ -67,6 +67,7 @@ urlpatterns = [
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
+    path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
     path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
     # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
