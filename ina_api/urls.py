@@ -65,20 +65,13 @@ urlpatterns = [
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
 
-<<<<<<< HEAD
-	#USER
-	path('getUserById/<int:id>', UserController.getUserById, name="userById"),
-	path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
-	path('createUser', UserController.createUser, name="createUser"), #Fields: email, password, firstName, lastName, mobile
-	path('deleteUser', UserController.deleteUser, name="deleteUser"), #Fields: id
-=======
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
+    path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
     path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
     # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
->>>>>>> upstream/master
 
     # USERTAG
     path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),

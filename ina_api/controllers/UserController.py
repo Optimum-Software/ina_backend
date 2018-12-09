@@ -43,22 +43,6 @@ def getUserByEmail(request):
 @api_view(['GET'])
 def test(request):
     try:
-<<<<<<< HEAD
-        if( data['email'] == '' or
-            data['password'] == '' or
-            data['firstName'] == '' or
-            data['lastName'] == '' or
-            data['mobile'] == ''):
-            return JsonResponse({"bool": False, "msg": "Vul alle verplichte velden in aub"}, safe=True)
-        try:
-            userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'], last_name=data['lastName'], mobile=data['mobile'])
-            userObject.save()
-            return JsonResponse({"bool": True, "msg": "Gebruiker aangemaakt", "id": userObject.pk}, safe=True)
-        except:
-            return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
-    except:
-        return JsonResponse({"bool": False, "msg": "Stuur alle velden mee aub"}, safe=True)
-=======
         if request.user.is_authenticated:
             return JsonResponse({"bool": True, "msg": "YAAAAAAAY!!"}, safe=True)
         else:
@@ -88,24 +72,20 @@ class CreateUserAPIView(CreateAPIView):
             token = Token.objects.create(user=serializer.instance)
             token_data = {"token": token.key}
 
+            if( data['email'] == '' or
+                data['password'] == '' or
+                data['firstName'] == '' or
+                data['lastName'] == '' or
+                data['mobile'] == ''):
+                return JsonResponse({"bool": False, "msg": "Vul alle verplichte velden in aub"}, safe=True)
             try:
-                userObject = User(pk=serializer.instance.pk,
-                                  email=data['username'],
-                                  password=data['password'],
-                                  first_name=data['firstName'],
-                                  last_name=data['lastName'],
-                                  bio=data['bio'],
-                                  mobile=data['mobile'],
-                                  organisation=data['organisation'],
-                                  function=data['function'],
-                                  profile_photo_path=data['profilePhotoPath'])
+                userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'], last_name=data['lastName'], mobile=data['mobile'])
                 userObject.save()
-
-                return JsonResponse({"bool": True, "msg": "User entry created", "id": userObject.pk, }, safe=True)
+                return JsonResponse({"bool": True, "msg": "Gebruiker aangemaakt", "id": userObject.pk}, safe=True)
             except:
-                return JsonResponse({"bool": False, "msg": "Could not create user"}, safe=True)
+                return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
         except IntegrityError as e:
-            return JsonResponse({"bool": False, "msg": "Could not create user"}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
 
 
 @require_http_methods(['PUT'])
@@ -126,25 +106,15 @@ def updateUser(request):
     except:
         return JsonResponse({"bool": False, "msg": "User entry could not be updated"}, safe=True)
 
->>>>>>> upstream/master
-
 @require_http_methods(['DELETE'])
 def deleteUser(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
         userObject = User.objects.get(pk=data['id'])
     except:
-<<<<<<< HEAD
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
-=======
-        return JsonResponse({"bool": False, "msg": "User with id [" + str(data['id']) + "] does not exist"}, safe=True)
->>>>>>> upstream/master
     try:
         userObject.delete()
         return JsonResponse({"bool": True, "msg": "Gebruiker verwijderd"}, safe=True)
     except:
-<<<<<<< HEAD
         return JsonResponse({"bool": False, "msg": "Kon gebruiker niet verwijderen"}, safe=True)
-=======
-        return JsonResponse({"bool": False, "msg": "User entry could not be deleted"}, safe=True)
->>>>>>> upstream/master
