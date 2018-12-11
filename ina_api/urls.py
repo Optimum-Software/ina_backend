@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController
 
 urlpatterns = [
     # Authentication tutorial
@@ -21,7 +21,7 @@ urlpatterns = [
 
     # DEVICE
     path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
-    path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceName
+    path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceId
     path('deleteDeviceById', DeviceController.deleteDeviceById, name="deleteDeviceById"),  # Fields: id
 
     # FILE
@@ -42,6 +42,9 @@ urlpatterns = [
     path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
     path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
+
+    #MESSAGE
+    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
