@@ -74,3 +74,6 @@ __pycache__/
 .ina_api/controllers/__pycache__/
 *.py[cod]
 
+.user
+.project
+
