@@ -12,6 +12,7 @@ import json
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.db import IntegrityError
 
+
 class LoginUser(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -20,9 +21,11 @@ class LoginUser(ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            return JsonResponse({"bool": True, "msg": "User successfully logged in", "token": token.key,}, safe=True)
+            return JsonResponse({"bool": True, "msg": "User successfully logged in",
+                                 "token": token.key,
+                                 "userId": user.id}, safe=True)
         else:
-            return JsonResponse({"bool": False, "msg": "User credentials not valid",}, safe=True)
+            return JsonResponse({"bool": False, "msg": "User credentials not valid", }, safe=True)
 
 
 class LogoutUser(APIView):
