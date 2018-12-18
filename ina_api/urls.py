@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController
 
 urlpatterns = [
     # Authentication tutorial
@@ -21,11 +21,12 @@ urlpatterns = [
 
     # DEVICE
     path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
-    path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceName
+    path('createDevice', DeviceController.createDevice, name="createDevice"),  # Fields: userId, deviceId
     path('deleteDeviceById', DeviceController.deleteDeviceById, name="deleteDeviceById"),  # Fields: id
 
     # FILE
     path('getFileById/<int:id>', FileController.getFileById, name="fileById"),
+    path('uploadFileForProject', FileController.uploadFileForProject, name="uploadFileForProject"),
 
     # GROUP
     path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
@@ -42,6 +43,9 @@ urlpatterns = [
     path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
     path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
+
+    #MESSAGE
+    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
@@ -70,8 +74,9 @@ urlpatterns = [
     path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
     path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
-    # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
+    path('uploadFileForUser', UserController.uploadFileForProfilePhoto, name="uploadFileForProfilePhoto"),
+    path('editOptionalInfo', UserController.editOptionalInfo, name="editOptionalInfo"),
 
     # USERTAG
     path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
