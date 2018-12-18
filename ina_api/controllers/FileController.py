@@ -17,7 +17,7 @@ def getFileById(request, id):
         return JsonResponse({"bool": False, "msg": "File bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])
-def uploadFile(request):
+def uploadFileForProject(request):
 	for fieldName in request.FILES:
 		file = request.FILES[fieldName]
 		projectId = fieldName.split("_")[0]

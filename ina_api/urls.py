@@ -26,7 +26,7 @@ urlpatterns = [
 
     # FILE
     path('getFileById/<int:id>', FileController.getFileById, name="fileById"),
-    path('uploadFile', FileController.uploadFile, name="uploadFile"),
+    path('uploadFileForProject', FileController.uploadFileForProject, name="uploadFileForProject"),
 
     # GROUP
     path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
@@ -75,6 +75,8 @@ urlpatterns = [
     path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
+    path('uploadFileForUser', UserController.uploadFileForProfilePhoto, name="uploadFileForProfilePhoto"),
+    path('editOptionalInfo', UserController.editOptionalInfo, name="editOptionalInfo"),
 
     # USERTAG
     path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
