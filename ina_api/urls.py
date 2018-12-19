@@ -74,6 +74,10 @@ urlpatterns = [
     path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
     path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
     path('updateUser', UserController.updateUser, name="updateUser"),
+    path('passwordForgotVerification', UserController.sendPasswordVerification, name="sendPasswordVerification"),
+    path('changePassword', UserController.changePassword, name="changePassword"),
+    # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
+
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
     path('uploadFileForUser', UserController.uploadFileForProfilePhoto, name="uploadFileForProfilePhoto"),
     path('editOptionalInfo', UserController.editOptionalInfo, name="editOptionalInfo"),

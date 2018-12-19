@@ -9,10 +9,11 @@ class User(models.Model):
     password = models.CharField(max_length=200)
     salt = models.CharField(max_length=50, null=True)
     mobile = models.CharField(max_length=22)
-    organisation = models.CharField(max_length=200) #optional, example: Hanzehogeschool Groningen
-    function = models.CharField(max_length=200)     #optional, example: Docent Software Engineering
+    organisation = models.CharField(max_length=200)  # optional, example: Hanzehogeschool Groningen
+    function = models.CharField(max_length=200)  # optional, example: Docent Software Engineering
     profile_photo_path = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now=True)
+    passwordVerification = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return self.first_name + " " + self.last_name
@@ -55,6 +56,7 @@ class Group(models.Model):
 
         }
 
+
 class Member(models.Model):
     status = models.BooleanField(default=False)
     messsage = models.TextField(max_length=1000)
@@ -70,7 +72,6 @@ class Member(models.Model):
             "project": self.group,
             "user": self.user
         }
-
 
 
 class Project(models.Model):
@@ -106,6 +107,7 @@ class Project(models.Model):
             "location": self.location
         }
 
+
 class Group_Admin(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -119,6 +121,7 @@ class Group_Admin(models.Model):
             "group": self.group,
             "user": self.user
         }
+
 
 class Project_Admin(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -134,6 +137,7 @@ class Project_Admin(models.Model):
             "user": self.user
         }
 
+
 class File(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     path = models.CharField(max_length=1000)
@@ -147,6 +151,7 @@ class File(models.Model):
             "project": self.project,
             "path": self.path
         }
+
 
 class Project_Liked(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -162,6 +167,7 @@ class Project_Liked(models.Model):
             "user": self.user
         }
 
+
 class Project_Favorite(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -175,6 +181,7 @@ class Project_Favorite(models.Model):
             "project": self.project,
             "user": self.user
         }
+
 
 class Project_Followed(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -190,6 +197,7 @@ class Project_Followed(models.Model):
             "user": self.user
         }
 
+
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     device_name = models.CharField(max_length=100)
@@ -204,6 +212,7 @@ class Device(models.Model):
             "device_name": self.device_name
         }
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=200)
 
@@ -215,6 +224,7 @@ class Tag(models.Model):
             "id": self.pk,
             "name": self.name
         }
+
 
 class User_Tag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
@@ -230,6 +240,7 @@ class User_Tag(models.Model):
             "user": self.user
         }
 
+
 class Project_Tag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -243,4 +254,3 @@ class Project_Tag(models.Model):
             "tag": self.tag,
             "project": self.project
         }
-
