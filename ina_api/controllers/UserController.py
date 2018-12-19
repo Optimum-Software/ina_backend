@@ -17,6 +17,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
 from django.utils.crypto import get_random_string
+from django.core.files.storage import FileSystemStorage
 
 
 @require_http_methods(['GET'])
@@ -102,7 +103,6 @@ def test(request):
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
-        print(message)
 
 
 class CreateUserAPIView(CreateAPIView):
@@ -173,3 +173,39 @@ def deleteUser(request):
         return JsonResponse({"bool": True, "msg": "Gebruiker verwijderd"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Kon gebruiker niet verwijderen"}, safe=True)
+
+@require_http_methods(['POST'])
+def uploadFileForProfilePhoto(request):
+    for fieldName in request.FILES:
+        file = request.FILES[fieldName]
+        userId = fieldName.split("_")[0]
+        try:
+            userObject = User.objects.get(pk=userId)
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
+        fs = FileSystemStorage('./user/' + userId)
+        filename = fs.save(file.name, file)
+        uploadedFileUrl = ('/user/' + userId + '/' + fs.url(filename)).replace("%20", "")
+
+        try:
+            userObject.profile_photo_path = uploadedFileUrl
+            userObject.save()
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon profiel foto niet instellen", "file": filename}, safe=True)
+    return JsonResponse({"bool": True, "msg": "Profiel foto geupload"}, safe=True)
+
+@require_http_methods(['POST'])
+def editOptionalInfo(request):
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        userObject = User.objects.get(pk=data['userId'])
+    except:
+        return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
+    try:
+        userObject.organisation = data['organisation']
+        userObject.function = data['function']
+        userObject.bio = data['bio']
+        userObject.save()
+    except:
+        return JsonResponse({"bool": False, "msg": "Kon info niet instellen"}, safe=True)
+    return JsonResponse({"bool": True, "msg": "Info voor gebruiker [" + str(data['userId']) + "] ingesteld"})

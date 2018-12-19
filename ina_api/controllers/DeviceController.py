@@ -28,9 +28,15 @@ def createDevice(request):
         except:
             return JsonResponse({"bool": False, "msg": "gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
-            deviceObject = Device(user=userObject, device_name=data['deviceName'])
-            deviceObject.save()
-            return JsonResponse({"bool": True, "msg": "Device aangemaakt", "id": deviceObject.pk}, safe=True)
+            if not Device.objects.filter(user=userObject).exists():
+                deviceObject = Device(user=userObject, device_name=data['deviceId'])
+                deviceObject.save()
+                return JsonResponse({"bool": True, "msg": "Device aangemaakt", "id": deviceObject.pk}, safe=True)
+            else:
+                deviceObject = Device.objects.filter(user=userObject).first()
+                deviceObject.device_name = data['deviceId']
+                deviceObject.save()
+                return JsonResponse({"bool": True, "msg": "Device aangepast", "id": deviceObject.pk}, safe=True)
         except:
             return JsonResponse({"bool": False, "msg": "Kon Device niet aanmaken"}, safe=True)
     except:
@@ -48,6 +54,6 @@ def deleteDeviceById(request):
         return JsonResponse({"bool": True, "msg": "Device verwijderd"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Kon Device niet verwijderen"}, safe=True)
-    
+
     
     
