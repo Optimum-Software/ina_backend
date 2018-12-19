@@ -14,3 +14,27 @@ def getProjectById(request, id):
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjects(request):
+    projectList = []
+    try:
+        projectObjects = Project.objects.all()
+        for project in projectObjects:
+            fileObject = File.objects.get(project=project)
+            print(fileObject)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'url': fileObject.path,
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)

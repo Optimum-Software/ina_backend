@@ -17,3 +17,21 @@ def getProjectLikedById(request, id):
         return JsonResponse({"bool": True, "msg": "ProjectLiked bestaat", "projectLiked": projectLikedJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "ProjectLiked bestaat niet"}, safe=True)
+
+@require_http_methods(['POST'])
+def likeProjectById(request):
+    data = json.loads(request.body.decode('utf8'))
+    id = data['id']
+    try:
+        projectObject = Project.objects.get(pk=id)
+        projectObject.like_count += 1
+        projectObject.save()
+        likedCount = projectObject.like_count
+        return JsonResponse({"bool": True,"msg": "Like is toegevoegd","likedCount":likedCount}, safe=True)
+    except:
+        print("exception")
+        return JsonResponse({"bool": False,"msg": "Het is niet gelukt om te liken","likedCount":likedCount}, safe=True)
+    try:
+        pass
+    except:
+        pass
