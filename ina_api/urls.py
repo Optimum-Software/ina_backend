@@ -49,6 +49,7 @@ urlpatterns = [
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
+    path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
