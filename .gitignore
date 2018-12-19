@@ -78,3 +78,6 @@ __pycache__/
 .user/
 .project/
 
+# settings
+/ina_backend/settings.py
+
