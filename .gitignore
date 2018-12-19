@@ -75,8 +75,7 @@ __pycache__/
 .ina_api/controllers/__pycache__/
 *.py[cod]
 
-.user/
-.project/
+.media/
 
 # settings
 /ina_backend/settings.py

@@ -32,6 +32,7 @@ urlpatterns = [
     path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
     path('getGroupByName/<slug:group_name>', GroupController.getGroupByName, name='GroupByName'),
     path('createGroup', GroupController.createGroup, name='createGroup'),
+    path('uploadGroupPhoto', GroupController.uploadGroupPhoto, name='uploadGroupPhoto'),
     path('deleteGroupById', GroupController.deleteGroupById, name='deleteGroupById'),
     path('deleteGroupByName', GroupController.deleteGroupByName, name='deleteGroupByName'),
 

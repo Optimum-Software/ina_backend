@@ -5,6 +5,8 @@ import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
+
 
 @require_http_methods(['GET'])
 def getGroupById(request, id):
@@ -15,8 +17,12 @@ def getGroupById(request, id):
         return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
 
 @require_http_methods(['GET'])
-def getGroupByName(request):
-    return JsonResponse({}, safe=True)
+def getGroupByName(request, group_name):
+    try:
+        groupObject = Group.objects.get(name=group_name).__repr__()
+        return JsonResponse({"bool": True, "msg": "Groep bestaat", "group": groupObject}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])
 def createGroup(request):
@@ -61,3 +67,23 @@ def deleteGroupByName(request):
         return JsonResponse({"bool": True, "msg": "Groep verwijderd"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Kon groep niet verwijderen"}, safe=True)
+
+@require_http_methods(['POST'])
+def uploadGroupPhoto(request):
+    for fieldName in request.FILES:
+        file = request.FILES[fieldName]
+        groupId = fieldName.split("_")[0]
+        try:
+            groupObject = Group.objects.get(pk=groupId)
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "Groep bestaat niet"}, safe=True)
+        fs = FileSystemStorage('./media/group/' + groupId)
+        filename = fs.save(file.name, file)
+        uploadedFileUrl = ('/group/' + groupId + '/' + fs.url(filename)).replace("%20", "")
+
+        try:
+            groupObject.photo_path = uploadedFileUrl
+            groupObject.save()
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon groeps foto niet instellen", "file": filename}, safe=True)
+    return JsonResponse({"bool": True, "msg": "Groeps foto geupload"}, safe=True)

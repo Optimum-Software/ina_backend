@@ -25,7 +25,7 @@ def uploadFileForProject(request):
 			projectObject = Project.objects.get(pk=projectId)
 		except ObjectDoesNotExist:
 			return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
-		fs = FileSystemStorage('./project/' + projectId)
+		fs = FileSystemStorage('./media/project/' + projectId)
 		filename = fs.save(file.name, file)
 		uploadedFileUrl = ('/project/' + projectId + '/' + fs.url(filename)).replace("%20", "")
 
