@@ -59,8 +59,9 @@ urlpatterns = [
     path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
 
     # PROJECTFOLLOWED
-    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById,
-         name="projectFollowedById"),
+    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
+    path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
+    path('getAllFollowedProjectsById/<int:id>', ProjectFollowedController.getAllFollowedProjectsById, name="getAllFollowedProjectsById"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),

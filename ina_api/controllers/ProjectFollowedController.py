@@ -32,3 +32,32 @@ def followProjectById(request):
         return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllFollowedProjectsById(request,id):
+    projectList = []
+    try:
+        user = User.objects.get(pk=id)
+        projectsFollowed = Project_Followed.objects.filter(user=user)
+        if (projectsFollowed):
+            for project in projectsFollowed:
+                fileObject = File.objects.get(project=project)
+                print(project)
+                projectList.append({
+                    'id': project.id,
+                    'name': project.name,
+                    'url': fileObject.path,
+                    'desc': project.desc,
+                    'start_date': project.start_date,
+                    'end_date': project.end_date,
+                    'created_at': project.created_at,
+                    'like_count': project.like_count,
+                    'follower_count': project.follower_count,
+                    'location': project.location
+                })
+
+            return JsonResponse({"bool": True, "msg": "Projecten die je volgt.", "projects": projectList}, safe=True)
+        else:
+            return JsonResponse({"bool": False, "msg": "Je volgt nog geen projecten"}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Het is is niet gelukt om te volgen"}, safe=True)
