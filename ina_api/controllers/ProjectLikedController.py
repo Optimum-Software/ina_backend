@@ -38,10 +38,39 @@ def likeProjectById(request):
             projectLiked = Project_Liked(project=projectObject.name, user=userObject)
             projectLiked.save()
         except:
-            return JsonResponse({"bool": True, "msg": "Kon liked niet koppelen aan project", "likedCount": likedCount}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Kon like niet koppelen aan project", "likedCount": likedCount}, safe=True)
 
         return JsonResponse({"bool": True, "msg": "Like is toegevoegd", "likedCount": likedCount}, safe=True)
     except:
         print("exception")
         return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te liken", "likedCount": likedCount},
                             safe=True)
+
+@require_http_methods(['GET'])
+def getAllLikedProjectsById(request,id):
+    projectList = []
+    try:
+        user = User.objects.get(pk=id)
+        projectLikes = Project_Liked.objects.filter(user=user)
+        if (projectLikes):
+            for project in projectLikes:
+                fileObject = File.objects.get(project=project)
+                print(project)
+                projectList.append({
+                    'id': project.id,
+                    'name': project.name,
+                    'url': fileObject.path,
+                    'desc': project.desc,
+                    'start_date': project.start_date,
+                    'end_date': project.end_date,
+                    'created_at': project.created_at,
+                    'like_count': project.like_count,
+                    'follower_count': project.follower_count,
+                    'location': project.location
+                })
+
+            return JsonResponse({"bool": True, "msg": "Projects found that you liked", "projects": projectList}, safe=True)
+        else:
+            return JsonResponse({"bool": False, "msg": "you have not like any projects"}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "failed to get your likes"}, safe=True)

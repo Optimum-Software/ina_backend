@@ -65,6 +65,7 @@ urlpatterns = [
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
     path('likeProjectById', ProjectLikedController.likeProjectById, name="likeProjectById"),
+    path('getAllLikedProjectsById/<int:id>', ProjectLikedController.getAllLikedProjectsById, name="getAllLikedProjectsById"),
 
     # PROJECTTAG
     path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
