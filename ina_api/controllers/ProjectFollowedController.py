@@ -23,11 +23,10 @@ def followProjectById(request):
     data = json.loads(request.body.decode('utf8'))
     projectId = data['id']
     userId = data['userId']
-
     try:
         projectObject = Project.objects.get(pk=projectId)
-        userObject = Project.objects.get(pk=userId)
-        projectFollowed = Project_Followed(project=projectObject.name, user=userObject)
+        userObject = User.objects.get(pk=userId)
+        projectFollowed = Project_Followed(project=projectObject, user=userObject)
         projectFollowed.save()
         return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
     except:
