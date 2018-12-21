@@ -49,6 +49,7 @@ urlpatterns = [
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
+    path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
@@ -58,12 +59,14 @@ urlpatterns = [
     path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
 
     # PROJECTFOLLOWED
-    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById,
-         name="projectFollowedById"),
+    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
+    path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
+    path('getAllFollowedProjectsById/<int:id>', ProjectFollowedController.getAllFollowedProjectsById, name="getAllFollowedProjectsById"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
     path('likeProjectById', ProjectLikedController.likeProjectById, name="likeProjectById"),
+    path('getAllLikedProjectsById/<int:id>', ProjectLikedController.getAllLikedProjectsById, name="getAllLikedProjectsById"),
 
     # PROJECTTAG
     path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
