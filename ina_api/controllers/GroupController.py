@@ -6,6 +6,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 
 
 @require_http_methods(['GET'])
@@ -79,8 +80,9 @@ def uploadGroupPhoto(request):
             return JsonResponse({"bool": False, "msg": "Groep bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/group/' + groupId)
         filename = fs.save(file.name, file)
-        uploadedFileUrl = ('/group/' + groupId + '/' + fs.url(filename)).replace("%20", "")
-
+        print(filename)
+        uploadedFileUrl = ('/group/' + groupId + "/" + filename).replace("%20", "")
+        print(uploadedFileUrl)
         try:
             groupObject.photo_path = uploadedFileUrl
             groupObject.save()
