@@ -26,9 +26,12 @@ def followProjectById(request):
     try:
         projectObject = Project.objects.get(pk=projectId)
         userObject = User.objects.get(pk=userId)
-        projectFollowed = Project_Followed(project=projectObject, user=userObject)
-        projectFollowed.save()
-        return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
+        if Project_Followed.objects.filter(project=projectObject).exists():
+            return JsonResponse({"bool": False, "msg": "Je volgt al dit project"}, safe=True)
+        else:
+            projectFollowed = Project_Followed(project=projectObject, user=userObject)
+            projectFollowed.save()
+            return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
 
