@@ -20,14 +20,16 @@ def getAllProjectTagsById(request,id):
     tagList = []
     try:
         projectObject = Project.objects.get(pk=id)
-        projectTags = Project_Tag.objects.filter(project=id).all()
+        projectTags = Project_Tag.objects.filter(project=projectObject).all()
+
         if (projectTags):
             for tag in projectTags:
+                specificTag = Tag.objects.get(id=tag.tag_id)
                 tagList.append({
-                    'name': tag,
+                    'name': specificTag.name,
                 })
 
-            return JsonResponse({"bool": True, "msg": "Tags die bij project horen", "projects": tagList}, safe=True)
+            return JsonResponse({"bool": True, "msg": "Tags die bij het project horen", "tags": tagList}, safe=True)
         else:
             return JsonResponse({"bool": False, "msg": "Dit project heeft geen tags"}, safe=True)
     except ObjectDoesNotExist:
