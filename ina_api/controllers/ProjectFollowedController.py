@@ -42,9 +42,9 @@ def getAllFollowedProjectsById(request,id):
         user = User.objects.get(pk=id)
         projectsFollowed = Project_Followed.objects.filter(user=user)
         if (projectsFollowed):
-            for project in projectsFollowed:
+            for projectObject in projectsFollowed:
+                project = Project.objects.get(id=projectObject.project_id)
                 fileObject = File.objects.get(project=project)
-                print(project)
                 projectList.append({
                     'id': project.id,
                     'name': project.name,
@@ -62,4 +62,4 @@ def getAllFollowedProjectsById(request,id):
         else:
             return JsonResponse({"bool": False, "msg": "Je volgt nog geen projecten"}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "Het is is niet gelukt om te volgen"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
