@@ -73,6 +73,7 @@ urlpatterns = [
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
+    path('getAllProjectTagsById/<int:id>', TagController.getAllProjectTagsById, name="getAllProjectTagsById"),
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
