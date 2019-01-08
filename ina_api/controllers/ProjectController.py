@@ -21,12 +21,18 @@ def getAllProjects(request):
     try:
         projectObjects = Project.objects.all()
         for project in projectObjects:
-            fileObject = File.objects.get(project=project)
-            print(fileObject)
+            fileObjectList = File.objects.filter(project=project).all()
+            url = ""
+            for file in fileObjectList:
+                type = file.path.split("/")[3]
+                if type[0:5] == "image":
+                    url = file.path
+                    break
+
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': fileObject.path,
+                'url': url,
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
