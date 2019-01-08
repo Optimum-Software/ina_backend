@@ -184,7 +184,8 @@ def uploadFileForProfilePhoto(request):
             return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/user/' + userId)
         filename = fs.save(file.name, file)
-        uploadedFileUrl = ('/user/' + userId + fs.url(filename)).replace("%20", "")
+        print(filename)
+        uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
 
         try:
             userObject.profile_photo_path = uploadedFileUrl

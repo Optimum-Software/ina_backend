@@ -81,7 +81,7 @@ def uploadGroupPhoto(request):
         fs = FileSystemStorage('./media/group/' + groupId)
         filename = fs.save(file.name, file)
         print(filename)
-        uploadedFileUrl = ('/group/' + groupId + "/" + filename).replace("%20", "")
+        uploadedFileUrl = ('/group/' + groupId + "/" + (filename).replace("%20", ""))
         print(uploadedFileUrl)
         try:
             groupObject.photo_path = uploadedFileUrl
