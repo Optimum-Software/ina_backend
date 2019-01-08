@@ -34,9 +34,12 @@ def likeProjectById(request):
         likedCount = projectObject.like_count
 
         try:
-            userObject = Project.objects.get(pk=userId)
-            projectLiked = Project_Liked(project=projectObject.name, user=userObject)
-            projectLiked.save()
+            if Project_Liked.objects.filter(project=projectObject).exists():
+                return JsonResponse({"bool": False, "msg": "Je hebt het project al een like gegeven", "likedCount": likedCount}, safe=True)
+            else:
+                userObject = User.objects.get(pk=userId)
+                projectLiked = Project_Liked(project=projectObject, user=userObject)
+                projectLiked.save()
         except:
             return JsonResponse({"bool": False, "msg": "Kon like niet koppelen aan project", "likedCount": likedCount}, safe=True)
 

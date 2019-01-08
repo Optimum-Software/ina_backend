@@ -14,3 +14,23 @@ def getTagById(request, id):
         return JsonResponse({"bool": True, "msg": "Tag bestaat", "Tag": tagObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Tag bestaat niet"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjectTagsById(request,id):
+    tagList = []
+    try:
+        projectObject = Project.objects.get(pk=id)
+        projectTags = Project_Tag.objects.filter(project=projectObject).all()
+
+        if (projectTags):
+            for tag in projectTags:
+                specificTag = Tag.objects.get(id=tag.tag_id)
+                tagList.append({
+                    'name': specificTag.name,
+                })
+
+            return JsonResponse({"bool": True, "msg": "Tags die bij het project horen", "tags": tagList}, safe=True)
+        else:
+            return JsonResponse({"bool": False, "msg": "Dit project heeft geen tags"}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Het is niet gelukt om de tags op te halen"}, safe=True)

@@ -23,13 +23,15 @@ def followProjectById(request):
     data = json.loads(request.body.decode('utf8'))
     projectId = data['id']
     userId = data['userId']
-
     try:
         projectObject = Project.objects.get(pk=projectId)
-        userObject = Project.objects.get(pk=userId)
-        projectFollowed = Project_Followed(project=projectObject.name, user=userObject)
-        projectFollowed.save()
-        return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
+        userObject = User.objects.get(pk=userId)
+        if Project_Followed.objects.filter(project=projectObject).exists():
+            return JsonResponse({"bool": False, "msg": "Je volgt al dit project"}, safe=True)
+        else:
+            projectFollowed = Project_Followed(project=projectObject, user=userObject)
+            projectFollowed.save()
+            return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
 
@@ -40,9 +42,9 @@ def getAllFollowedProjectsById(request,id):
         user = User.objects.get(pk=id)
         projectsFollowed = Project_Followed.objects.filter(user=user)
         if (projectsFollowed):
-            for project in projectsFollowed:
+            for projectObject in projectsFollowed:
+                project = Project.objects.get(id=projectObject.project_id)
                 fileObject = File.objects.get(project=project)
-                print(project)
                 projectList.append({
                     'id': project.id,
                     'name': project.name,
@@ -60,4 +62,4 @@ def getAllFollowedProjectsById(request,id):
         else:
             return JsonResponse({"bool": False, "msg": "Je volgt nog geen projecten"}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "Het is is niet gelukt om te volgen"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
