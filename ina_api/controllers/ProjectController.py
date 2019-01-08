@@ -37,4 +37,4 @@ def getAllProjects(request):
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "There are no projects"}, safe=True)
