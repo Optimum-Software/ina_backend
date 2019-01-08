@@ -17,7 +17,6 @@ class LoginUser(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
-        print(serializer.is_valid())
         if serializer.is_valid():
             userObject = User.objects.get(email=serializer.validated_data['user']).__repr__()
             user = serializer.validated_data['user']
@@ -30,8 +29,8 @@ class LoginUser(ObtainAuthToken):
 
 class LogoutUser(APIView):
     queryset = get_user_model().objects.all()
-
     def get(self, request, format=None):
         # simply delete the token to force a login
+        print(request)
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
