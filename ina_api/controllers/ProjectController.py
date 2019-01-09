@@ -6,6 +6,7 @@ import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
 
 @require_http_methods(['GET'])
 def getProjectById(request, id):
@@ -44,3 +45,24 @@ def getAllProjects(request):
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
+
+@require_http_methods(['POST'])
+def uploadThumbnailForProject(request):
+    for fieldName in request.FILES:
+        file = request.FILES[fieldName]
+        projectId = fieldName.split("_")[0]
+        try:
+            projectObject = Project.objects.get(pk=projectId)
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
+        fs = FileSystemStorage('./media/project/' + projectId)
+        filename = fs.save(file.name, file)
+        uploadedFileUrl = ('/project/' + projectId + fs.url(filename)).replace("%20", "")
+
+        try:
+            projectObject.thumbnail = uploadedFileUrl
+            projectObject.save()
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon foto niet opslaan", "file": filename}, safe=True)
+    return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
