@@ -51,7 +51,14 @@ urlpatterns = [
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
     path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
+<<<<<<< HEAD
     path('uploadThumbnailForProject', ProjectController.uploadThumbnailForProject, name="uploadThumbnailForProject"),
+=======
+    path('getAllProjectsNewestFirst', ProjectController.getAllProjectsNewestFirst, name="getAllProjectsNewestFirst"),
+    path('getAllProjectsOldestFirst', ProjectController.getAllProjectsOldestFirst, name="getAllProjectsOldestFirst"),
+    path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
+    path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
+>>>>>>> upstream/master
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
