@@ -29,6 +29,8 @@ def createDevice(request):
             return JsonResponse({"bool": False, "msg": "gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
             if not Device.objects.filter(user=userObject).exists():
+                print(userObject)
+                print(data['deviceId'])
                 deviceObject = Device(user=userObject, device_name=data['deviceId'])
                 deviceObject.save()
                 return JsonResponse({"bool": True, "msg": "Device aangemaakt", "id": deviceObject.pk}, safe=True)

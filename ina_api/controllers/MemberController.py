@@ -6,6 +6,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
+
 @require_http_methods(['GET'])
 def getMember(request, group_id, user_id):
     try:
@@ -24,7 +25,9 @@ def getMember(request, group_id, user_id):
         return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
-    
+
+
+@require_http_methods(['GET'])
 def getMemberById(request, id):
     try:
         memberObject = Member.objects.get(pk=id)
@@ -34,6 +37,27 @@ def getMemberById(request, id):
         return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
+
+
+@require_http_methods(['GET'])
+def getMembersByGroupId(request, group_id):
+    memberList = []
+    try:
+        memberObjects = Member.objects.filter(group=group_id).all()
+        for member in memberObjects:
+            userObject = member.user.__repr__()
+            memberList.append({
+                'id': userObject['id'],
+                'firstName': userObject['firstName'],
+                'lastName': userObject['lastName'],
+                'bio': userObject['bio'],
+                'organisation': userObject['organisation'],
+                'profilePhotoPath': userObject['profilePhotoPath'],
+            })
+        return JsonResponse({"bool": True, "msg": "Members found for project", "members": memberList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
+
 
 @require_http_methods(['POST'])
 def createMember(request):
@@ -58,6 +82,7 @@ def createMember(request):
             return JsonResponse({"bool": False, "msg": "Kon deelnemer niet aanmaken"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle verplichte velden mee aub"}, safe=True)
+
 
 @require_http_methods(['DELETE'])
 def deleteMemberById(request):

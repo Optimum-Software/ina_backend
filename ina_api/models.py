@@ -258,3 +258,21 @@ class Project_Tag(models.Model):
             "tag": self.tag,
             "project": self.project
         }
+
+class Chat(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    chat_uid = models.CharField(max_length=10, unique=True)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.chat_uid
+
+    def __repr__(self):
+        return {
+            "id": self.pk,
+            "user1": self.user1.__repr__(),
+            "user2": self.user2.__repr__(),
+            "chatUid": self.chat_uid,
+            "createdAt": self.created_at
+        }

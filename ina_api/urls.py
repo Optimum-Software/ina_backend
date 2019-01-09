@@ -4,20 +4,20 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController
 
 urlpatterns = [
     # Authentication tutorial
-    path('login',
-         LoginController.LoginUser.as_view(),
-         name='auth_user_login'),
+    path('login',LoginController.LoginUser.as_view(),name='auth_user_login'),
 
-    path('logout',
-         LoginController.LogoutUser.as_view(),
-         name='auth_user_logout'),
+    path('logout',LoginController.LogoutUser.as_view(),name='auth_user_logout'),
 
     # BESTE FUNCTIE OOIT
     path('test/', UserController.test, name="test"),
+
+    #CHAT
+    path("createChat", ChatController.createChat, name="createChat"), #Fields: user1Id, user2Id, chatUid
+    path("getChatsForUser/<int:id>", ChatController.getChatsForUser, name="getChatsForUser"),
 
     # DEVICE
     path('getDeviceById/<int:id>', DeviceController.getDeviceById, name="deviceById"),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('getGroupById/<int:id>', GroupController.getGroupById, name='GroupById'),
     path('getGroupByName/<slug:group_name>', GroupController.getGroupByName, name='GroupByName'),
     path('createGroup', GroupController.createGroup, name='createGroup'),
+    path('uploadGroupPhoto', GroupController.uploadGroupPhoto, name='uploadGroupPhoto'),
     path('deleteGroupById', GroupController.deleteGroupById, name='deleteGroupById'),
     path('deleteGroupByName', GroupController.deleteGroupByName, name='deleteGroupByName'),
 
@@ -43,6 +44,7 @@ urlpatterns = [
     path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
     path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
+    path('getMembersByGroupId/<int:group_id>', MemberController.getMembersByGroupId, name='getMembersByGroupId'),
 
     #MESSAGE
     path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId

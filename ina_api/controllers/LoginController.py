@@ -14,10 +14,10 @@ from django.db import IntegrityError
 
 
 class LoginUser(ObtainAuthToken):
-
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
+        print(serializer.is_valid())
         if serializer.is_valid():
             userObject = User.objects.get(email=serializer.validated_data['user']).__repr__()
             user = serializer.validated_data['user']
