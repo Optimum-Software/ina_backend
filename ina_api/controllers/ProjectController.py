@@ -22,18 +22,11 @@ def getAllProjects(request):
     try:
         projectObjects = Project.objects.all()
         for project in projectObjects:
-            fileObjectList = File.objects.filter(project=project).all()
-            url = ""
-            for file in fileObjectList:
-                type = file.path.split("/")[3]
-                if type[0:5] == "image":
-                    url = file.path
-                    break
-
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': url,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -58,7 +51,7 @@ def uploadThumbnailForProject(request):
             return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/project/' + projectId)
         filename = fs.save(file.name, file)
-        uploadedFileUrl = ('/project/' + projectId + fs.url(filename)).replace("%20", "")
+        uploadedFileUrl = ('/project/' + projectId + "/" + filename).replace("%20", "")
 
         try:
             projectObject.thumbnail = uploadedFileUrl
