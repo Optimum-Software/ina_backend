@@ -1,5 +1,4 @@
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
-from django.contrib.auth import authenticate, login
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 import json
@@ -25,9 +24,9 @@ def uploadFileForProject(request):
 			projectObject = Project.objects.get(pk=projectId)
 		except ObjectDoesNotExist:
 			return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
-		fs = FileSystemStorage('./project/' + projectId)
+		fs = FileSystemStorage('./media/project/' + projectId)
 		filename = fs.save(file.name, file)
-		uploadedFileUrl = ('/project/' + projectId + '/' + fs.url(filename)).replace("%20", "")
+		uploadedFileUrl = ('/project/' + projectId + fs.url(filename)).replace("%20", "")
 
 		try:
 			fileObject = File(project = projectObject, path = uploadedFileUrl)

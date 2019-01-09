@@ -79,7 +79,6 @@ def generateVerificationCode():
 @require_http_methods(['POST'])
 def changePassword(request):
     data = json.loads(request.body.decode('utf-8'))
-    print(data)
     try:
         user = User.objects.get(email=data['email'])
         if user.passwordVerification == data['code']:
@@ -183,9 +182,10 @@ def uploadFileForProfilePhoto(request):
             userObject = User.objects.get(pk=userId)
         except ObjectDoesNotExist:
             return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
-        fs = FileSystemStorage('./user/' + userId)
+        fs = FileSystemStorage('./media/user/' + userId)
         filename = fs.save(file.name, file)
-        uploadedFileUrl = ('/user/' + userId + '/' + fs.url(filename)).replace("%20", "")
+        print(filename)
+        uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
 
         try:
             userObject.profile_photo_path = uploadedFileUrl
