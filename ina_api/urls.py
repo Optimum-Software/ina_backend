@@ -12,9 +12,6 @@ urlpatterns = [
 
     path('logout',LoginController.LogoutUser.as_view(),name='auth_user_logout'),
 
-    # BESTE FUNCTIE OOIT
-    path('test/', UserController.test, name="test"),
-
     #CHAT
     path("createChat", ChatController.createChat, name="createChat"), #Fields: user1Id, user2Id, chatUid
     path("getChatsForUser/<int:id>", ChatController.getChatsForUser, name="getChatsForUser"),
