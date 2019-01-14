@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ina_api', '0007_user_passwordverification'),
+        ('ina_api', '0003_user_passwordverification'),
         ('ina_api', '0005_auto_20181220_1126'),
     ]
 

@@ -9,6 +9,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 
+
 @require_http_methods(['GET'])
 def getGroupById(request, id):
     try:
@@ -16,6 +17,7 @@ def getGroupById(request, id):
         return JsonResponse({"bool": True, "msg": "Groep bestaat", "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
+
 
 @require_http_methods(['GET'])
 def getGroupByName(request, group_name):
@@ -25,23 +27,70 @@ def getGroupByName(request, group_name):
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
 
+
+@require_http_methods(['GET'])
+def getAllGroups(request):
+    groupList = []
+    try:
+        groupObject = Group.objects.all()
+        for group in groupObject:
+
+            groupList.append({
+                'id': group.id,
+                'name': group.name,
+                'desc': group.desc,
+                'photo_path': group.photo_path,
+                'created_at': group.created_at,
+                'member_count': group.member_count,
+                'public': group.public,
+            })
+        return JsonResponse({"bool": True, "msg": "Groepen gevonden", "groups": groupList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Er zijn geen groepen"}, safe=True)
+
+
+@require_http_methods(['POST'])
+def getMyGroups(request):
+    data = json.loads(request.body.decode('utf-8'))
+    groupList = []
+    try:
+        memberObjects = Member.objects.filter(user=data['userId'])
+        for member in memberObjects:
+            group = Group.objects.filter(id=member.group.id).first()
+            groupList.append({
+                'id': group.id,
+                'name': group.name,
+                'desc': group.desc,
+                'photo_path': group.photo_path,
+                'created_at': group.created_at,
+                'member_count': group.member_count,
+                'public': group.public,
+            })
+        return JsonResponse({"bool": True, "msg": "Groepen waar jij lid van bent gevonden", "groups": groupList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Je bent momenteel geen lid van een groep"}, safe=True)
+
+
+
 @require_http_methods(['POST'])
 def createGroup(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        if( data['name'] == '' or
-            data['desc'] == '' or
-            data['public'] == ''):
+        if (data['name'] == '' or
+                data['desc'] == '' or
+                data['public'] == ''):
             return JsonResponse({"bool": False, "msg": "Vul alle verplichte velden in aub"}, safe=True)
         try:
-            #photo_path gotten later by setGroupImg
-            groupObject = Group(name=data['name'], desc=data['desc'], photo_path=[''], member_count=0, public=data['public'])
+            # photo_path gotten later by setGroupImg
+            groupObject = Group(name=data['name'], desc=data['desc'], photo_path=[''], member_count=0,
+                                public=data['public'])
             groupObject.save()
             return JsonResponse({"bool": True, "msg": "Groep aangemaakt", "id": groupObject.pk}, safe=True)
         except:
             return JsonResponse({"bool": False, "msg": "Kon groep niet aanmaken"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle verplichte velden in aub"}, safe=True)
+
 
 @require_http_methods(['DELETE'])
 def deleteGroupById(request):
@@ -56,6 +105,7 @@ def deleteGroupById(request):
     except:
         return JsonResponse({"bool": False, "msg": "Kon groep niet verwijderen"}, safe=True)
 
+
 @require_http_methods(['DELETE'])
 def deleteGroupByName(request):
     data = json.loads(request.body.decode('utf-8'))
@@ -69,6 +119,7 @@ def deleteGroupByName(request):
     except:
         return JsonResponse({"bool": False, "msg": "Kon groep niet verwijderen"}, safe=True)
 
+
 @require_http_methods(['POST'])
 def uploadGroupPhoto(request):
     for fieldName in request.FILES:
@@ -80,9 +131,7 @@ def uploadGroupPhoto(request):
             return JsonResponse({"bool": False, "msg": "Groep bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/group/' + groupId)
         filename = fs.save(file.name, file)
-        print(filename)
         uploadedFileUrl = ('/group/' + groupId + "/" + (filename).replace("%20", ""))
-        print(uploadedFileUrl)
         try:
             groupObject.photo_path = uploadedFileUrl
             groupObject.save()

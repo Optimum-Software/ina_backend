@@ -24,7 +24,10 @@ def getAllProjects(request):
             fileObjectList = File.objects.filter(project=project).all()
             url = ""
             for file in fileObjectList:
-                type = file.path.split("/")[3]
+                try:
+                    type = file.path.split("/")[3]
+                except:
+                    break
                 if type[0:5] == "image":
                     url = file.path
                     break
@@ -43,6 +46,7 @@ def getAllProjects(request):
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
+
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
 @require_http_methods(['GET'])
@@ -52,7 +56,6 @@ def getAllProjectsNewestFirst(request):
         projectObjects = Project.objects.order_by('created_at').all()
         for project in projectObjects:
             fileObject = File.objects.get(project=project)
-            print(fileObject)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
@@ -76,7 +79,6 @@ def getAllProjectsOldestFirst(request):
         projectObjects = Project.objects.order_by('-created_at').all()
         for project in projectObjects:
             fileObject = File.objects.get(project=project)
-            print(fileObject)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
@@ -100,7 +102,6 @@ def getAllProjectsMostLikedFirst(request):
         projectObjects = Project.objects.order_by('-like_count').all()
         for project in projectObjects:
             fileObject = File.objects.get(project=project)
-            print(fileObject)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
@@ -124,7 +125,6 @@ def getAllProjectsMostFollowsFirst(request):
         projectObjects = Project.objects.order_by('-follower_count').all()
         for project in projectObjects:
             fileObject = File.objects.get(project=project)
-            print(fileObject)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
