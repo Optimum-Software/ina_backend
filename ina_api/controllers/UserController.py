@@ -144,14 +144,9 @@ def updateUser(request):
         if len(request.FILES) > 0:
             for fieldName in request.FILES:
                 file = request.FILES[fieldName]
-                userId = fieldName.split("_")[0]
-                try:
-                    userObject = User.objects.get(pk=userId)
-                except ObjectDoesNotExist:
-                    return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
-                fs = FileSystemStorage('./media/user/' + userId)
+                fs = FileSystemStorage('./media/user/' + request.POST.get('id'))
                 filename = fs.save(file.name, file)
-                uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
+                uploadedFileUrl = ('/user/' + request.POST.get('id') + '/' + (filename).replace("%20", ""))
         
                 try:
                     userObject.profile_photo_path = uploadedFileUrl
