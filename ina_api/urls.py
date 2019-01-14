@@ -56,6 +56,7 @@ urlpatterns = [
     path('getAllProjectsOldestFirst', ProjectController.getAllProjectsOldestFirst, name="getAllProjectsOldestFirst"),
     path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
     path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
+    path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
@@ -79,7 +80,10 @@ urlpatterns = [
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
+    path('getAllTags', TagController.getAllTags, name="allTags"),
     path('getAllProjectTagsById/<int:id>', TagController.getAllProjectTagsById, name="getAllProjectTagsById"),
+    path('uploadPictureForTag', TagController.uploadPictureForTag, name="uploadPictureForTag"),
+    path('searchForTags', TagController.searchForTags, name="searchForTags"),
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),

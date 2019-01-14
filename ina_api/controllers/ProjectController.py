@@ -150,3 +150,16 @@ def uploadThumbnailForProject(request):
         except:
             return JsonResponse({"bool": False, "msg": "Kon foto niet opslaan", "file": filename}, safe=True)
     return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
+
+@require_http_methods(['POST'])
+def searchForProjects(request):
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        resultList = Project.objects.filter(name__icontains=data['searchTerm']).all()
+        projects = []
+        for result in resultList:
+            projects.append(result.__repr__())
+        return JsonResponse({"bool": True, "msg": "Zoeken is gelukt", "projects": projects})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan tijdens het zoeken"})

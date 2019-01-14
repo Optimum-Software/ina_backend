@@ -184,7 +184,6 @@ def uploadFileForProfilePhoto(request):
             return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/user/' + userId)
         filename = fs.save(file.name, file)
-        print(filename)
         uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
 
         try:

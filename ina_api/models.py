@@ -101,7 +101,7 @@ class Project(models.Model):
             "id": self.pk,
             "name": self.name,
             "desc": self.desc,
-            "creator": self.creator,
+            "creator": self.creator.__repr__(),
             "startDate": self.start_date,
             "endDate": self.end_date,
             "createdAt": self.created_at,
@@ -219,6 +219,7 @@ class Device(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=200)
+    thumbnail = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.name
@@ -226,7 +227,8 @@ class Tag(models.Model):
     def __repr__(self):
         return {
             "id": self.pk,
-            "name": self.name
+            "name": self.name,
+            "thumbnail": self.thumbnail
         }
 
 
