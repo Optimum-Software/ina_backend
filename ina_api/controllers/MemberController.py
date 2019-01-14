@@ -6,8 +6,12 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
-@require_http_methods(['GET'])
-def getMember(request, group_id, user_id):
+
+@require_http_methods(['POST'])
+def getMember(request):
+    data = json.loads(request.body.decode('utf-8'))
+    group_id = data['groupId']
+    user_id = data['userId']
     try:
         try:
             userObject = User.objects.get(pk=user_id)
@@ -24,7 +28,9 @@ def getMember(request, group_id, user_id):
         return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
-    
+
+
+@require_http_methods(['GET'])
 def getMemberById(request, id):
     try:
         memberObject = Member.objects.get(pk=id)
@@ -34,6 +40,27 @@ def getMemberById(request, id):
         return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
+
+
+@require_http_methods(['GET'])
+def getMembersByGroupId(request, group_id):
+    memberList = []
+    try:
+        memberObjects = Member.objects.filter(group=group_id).all()
+        for member in memberObjects:
+            userObject = member.user.__repr__()
+            memberList.append({
+                'id': userObject['id'],
+                'firstName': userObject['firstName'],
+                'lastName': userObject['lastName'],
+                'bio': userObject['bio'],
+                'organisation': userObject['organisation'],
+                'profilePhotoPath': userObject['profilePhotoPath'],
+            })
+        return JsonResponse({"bool": True, "msg": "Members found for project", "members": memberList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
+
 
 @require_http_methods(['POST'])
 def createMember(request):
@@ -59,15 +86,16 @@ def createMember(request):
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle verplichte velden mee aub"}, safe=True)
 
+
 @require_http_methods(['DELETE'])
-def deleteMemberById(request):
+def deleteMember(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        memberObject = Member.objects.get(pk=data['id'])
+        memberObject = Member.objects.filter(user=data['userId'], group=data['groupId']).first()
+        try:
+            memberObject.delete()
+            return JsonResponse({"bool": True, "msg": "Deelnemer verwijderd"}, safe=True)
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon deelnemer niet verwijderen"}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Deelnemer met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
-    try:
-        memberObject.delete()
-        return JsonResponse({"bool": True, "msg": "Deelnemer verwijderd"}, safe=True)
-    except:
-        return JsonResponse({"bool": False, "msg": "Kon deelnemer niet verwijderen"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Deelnemer met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
