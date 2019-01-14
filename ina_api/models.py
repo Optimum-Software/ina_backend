@@ -15,10 +15,6 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     passwordVerification = models.CharField(max_length=10, null=True)
 
-
-
-
-
     def __str__(self):
         return self.first_name + " " + self.last_name
 
@@ -81,12 +77,14 @@ class Member(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField(max_length=3000)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=23)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     follower_count = models.IntegerField(default=0)
     location = models.CharField(max_length=200)
+    thumbnail = models.CharField(max_length=1000, default='no path')
 
     STATUSSES = (
         (0, 'New'),
@@ -103,12 +101,14 @@ class Project(models.Model):
             "id": self.pk,
             "name": self.name,
             "desc": self.desc,
+            "creator": self.creator.__repr__(),
             "startDate": self.start_date,
             "endDate": self.end_date,
             "createdAt": self.created_at,
             "likeCount": self.like_count,
             "followerCount": self.follower_count,
-            "location": self.location
+            "location": self.location,
+            "thumbnail": self.thumbnail,
         }
 
 
@@ -219,6 +219,7 @@ class Device(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=200)
+    thumbnail = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.name
@@ -226,7 +227,8 @@ class Tag(models.Model):
     def __repr__(self):
         return {
             "id": self.pk,
-            "name": self.name
+            "name": self.name,
+            "thumbnail": self.thumbnail
         }
 
 

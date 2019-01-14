@@ -91,19 +91,6 @@ def changePassword(request):
     except:
         return JsonResponse({"bool": False, "msg": "Er is iets misgegaan"}, safe=True)
 
-
-@api_view(['GET'])
-def test(request):
-    try:
-        if request.user.is_authenticated:
-            return JsonResponse({"bool": True, "msg": "YAAAAAAAY!!"}, safe=True)
-        else:
-            return JsonResponse({"bool": False, "msg": "unauthorized"}, safe=True)
-    except Exception as ex:
-        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
-        message = template.format(type(ex).__name__, ex.args)
-
-
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
@@ -140,23 +127,41 @@ class CreateUserAPIView(CreateAPIView):
             return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
 
 
-@require_http_methods(['PUT'])
+@require_http_methods(['POST'])
 def updateUser(request):
-    data = json.loads(request.body.decode('utf8'))
-
     try:
-        userObject = User.objects.get(pk=data['id'])
-    except:
-        return JsonResponse({"bool": False, "msg": "User with id [" + str(data['id']) + "] does not exist"}, safe=True)
+        userObject = User.objects.get(pk=request.POST.get('id'))
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(request.POST.get('id')) + "] bestaat niet"}, safe=True)
     try:
-        userObject.bio = data['bio']
-        userObject.organisation = data['organisation']
-        userObject.function = data['function']
-        userObject.save()
-
-        return JsonResponse({"bool": True, "msg": "User entry updated"}, safe=True)
-    except:
-        return JsonResponse({"bool": False, "msg": "User entry could not be updated"}, safe=True)
+        if request.POST.get('bio') != '':
+            userObject.bio = request.POST.get('bio')
+        if request.POST.get('organisation') != '':
+            userObject.organisation = request.POST.get('organisation')
+        if request.POST.get('function') != '':
+            userObject.function = request.POST.get('function')
+        if len(request.FILES) > 0:
+            for fieldName in request.FILES:
+                file = request.FILES[fieldName]
+                userId = fieldName.split("_")[0]
+                try:
+                    userObject = User.objects.get(pk=userId)
+                except ObjectDoesNotExist:
+                    return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
+                fs = FileSystemStorage('./media/user/' + userId)
+                filename = fs.save(file.name, file)
+                uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
+        
+                try:
+                    userObject.profile_photo_path = uploadedFileUrl
+                except:
+                    return JsonResponse({"bool": False, "msg": "Kon profiel foto niet aanpassen", "file": filename}, safe=True)
+                userObject.save()
+        return JsonResponse({"bool": True, "msg": "Gebruiker aangepast"}, safe=True)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanpassen"}, safe=True)
 
 
 @require_http_methods(['DELETE'])
@@ -184,7 +189,6 @@ def uploadFileForProfilePhoto(request):
             return JsonResponse({"bool": False, "msg": "User bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/user/' + userId)
         filename = fs.save(file.name, file)
-        print(filename)
         uploadedFileUrl = ('/user/' + userId + '/' + (filename).replace("%20", ""))
 
         try:
