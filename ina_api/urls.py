@@ -35,14 +35,16 @@ urlpatterns = [
     path('uploadGroupPhoto', GroupController.uploadGroupPhoto, name='uploadGroupPhoto'),
     path('deleteGroupById', GroupController.deleteGroupById, name='deleteGroupById'),
     path('deleteGroupByName', GroupController.deleteGroupByName, name='deleteGroupByName'),
+    path('getAllGroups', GroupController.getAllGroups, name='getAllGroups'),
+    path('getMyGroups', GroupController.getMyGroups, name='getMyGroups'),
 
     # GROUPADMIN
     path('getGroupAdminById/<int:id>', GroupAdminController.getGroupAdminById, name="groupAdminById"),
 
     # MEMBER
-    path('getMember/<int:group_id>/<int:user_id>', MemberController.getMember, name='getMember'),
+    path('getMember', MemberController.getMember, name='getMember'),
     path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
-    path('deleteMemberById', MemberController.deleteMemberById, name='deleteMember'),
+    path('deleteMember', MemberController.deleteMember, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
     path('getMembersByGroupId/<int:group_id>', MemberController.getMembersByGroupId, name='getMembersByGroupId'),
 
@@ -52,6 +54,10 @@ urlpatterns = [
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
     path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
+    path('getAllProjectsNewestFirst', ProjectController.getAllProjectsNewestFirst, name="getAllProjectsNewestFirst"),
+    path('getAllProjectsOldestFirst', ProjectController.getAllProjectsOldestFirst, name="getAllProjectsOldestFirst"),
+    path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
+    path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),

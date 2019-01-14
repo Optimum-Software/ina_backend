@@ -7,8 +7,11 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 
 
-@require_http_methods(['GET'])
-def getMember(request, group_id, user_id):
+@require_http_methods(['POST'])
+def getMember(request):
+    data = json.loads(request.body.decode('utf-8'))
+    group_id = data['groupId']
+    user_id = data['userId']
     try:
         try:
             userObject = User.objects.get(pk=user_id)
@@ -85,14 +88,14 @@ def createMember(request):
 
 
 @require_http_methods(['DELETE'])
-def deleteMemberById(request):
+def deleteMember(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        memberObject = Member.objects.get(pk=data['id'])
+        memberObject = Member.objects.filter(user=data['userId'], group=data['groupId']).first()
+        try:
+            memberObject.delete()
+            return JsonResponse({"bool": True, "msg": "Deelnemer verwijderd"}, safe=True)
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon deelnemer niet verwijderen"}, safe=True)
     except:
-        return JsonResponse({"bool": False, "msg": "Deelnemer met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
-    try:
-        memberObject.delete()
-        return JsonResponse({"bool": True, "msg": "Deelnemer verwijderd"}, safe=True)
-    except:
-        return JsonResponse({"bool": False, "msg": "Kon deelnemer niet verwijderen"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Deelnemer met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)

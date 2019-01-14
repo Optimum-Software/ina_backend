@@ -28,6 +28,50 @@ def getGroupByName(request, group_name):
         return JsonResponse({"bool": False, "msg": "Group bestaat niet"}, safe=True)
 
 
+@require_http_methods(['GET'])
+def getAllGroups(request):
+    groupList = []
+    try:
+        groupObject = Group.objects.all()
+        for group in groupObject:
+
+            groupList.append({
+                'id': group.id,
+                'name': group.name,
+                'desc': group.desc,
+                'photo_path': group.photo_path,
+                'created_at': group.created_at,
+                'member_count': group.member_count,
+                'public': group.public,
+            })
+        return JsonResponse({"bool": True, "msg": "Groepen gevonden", "groups": groupList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Er zijn geen groepen"}, safe=True)
+
+
+@require_http_methods(['POST'])
+def getMyGroups(request):
+    data = json.loads(request.body.decode('utf-8'))
+    groupList = []
+    try:
+        memberObjects = Member.objects.filter(user=data['userId'])
+        for member in memberObjects:
+            group = Group.objects.filter(id=member.group.id).first()
+            groupList.append({
+                'id': group.id,
+                'name': group.name,
+                'desc': group.desc,
+                'photo_path': group.photo_path,
+                'created_at': group.created_at,
+                'member_count': group.member_count,
+                'public': group.public,
+            })
+        return JsonResponse({"bool": True, "msg": "Groepen waar jij lid van bent gevonden", "groups": groupList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Je bent momenteel geen lid van een groep"}, safe=True)
+
+
+
 @require_http_methods(['POST'])
 def createGroup(request):
     data = json.loads(request.body.decode('utf-8'))
@@ -87,9 +131,7 @@ def uploadGroupPhoto(request):
             return JsonResponse({"bool": False, "msg": "Groep bestaat niet"}, safe=True)
         fs = FileSystemStorage('./media/group/' + groupId)
         filename = fs.save(file.name, file)
-        print(filename)
         uploadedFileUrl = ('/group/' + groupId + "/" + (filename).replace("%20", ""))
-        print(uploadedFileUrl)
         try:
             groupObject.photo_path = uploadedFileUrl
             groupObject.save()

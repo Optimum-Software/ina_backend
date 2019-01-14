@@ -46,4 +46,97 @@ def getAllProjects(request):
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There are no projects"}, safe=True)
+
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjectsNewestFirst(request):
+    projectList = []
+    try:
+        projectObjects = Project.objects.order_by('created_at').all()
+        for project in projectObjects:
+            fileObject = File.objects.get(project=project)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'url': fileObject.path,
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjectsOldestFirst(request):
+    projectList = []
+    try:
+        projectObjects = Project.objects.order_by('-created_at').all()
+        for project in projectObjects:
+            fileObject = File.objects.get(project=project)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'url': fileObject.path,
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjectsMostLikedFirst(request):
+    projectList = []
+    try:
+        projectObjects = Project.objects.order_by('-like_count').all()
+        for project in projectObjects:
+            fileObject = File.objects.get(project=project)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'url': fileObject.path,
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
+@require_http_methods(['GET'])
+def getAllProjectsMostFollowsFirst(request):
+    projectList = []
+    try:
+        projectObjects = Project.objects.order_by('-follower_count').all()
+        for project in projectObjects:
+            fileObject = File.objects.get(project=project)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'url': fileObject.path,
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
