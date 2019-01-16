@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController, ProjectUpdateController
 
 urlpatterns = [
     # Authentication tutorial
@@ -77,6 +77,9 @@ urlpatterns = [
 
     # PROJECTTAG
     path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
+
+    # PROJECTUPDATE
+    path('addProjectUpdate', ProjectUpdateController.addUpdate, name="addUpdate"),
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),

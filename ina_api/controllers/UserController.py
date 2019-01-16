@@ -135,24 +135,32 @@ def updateUser(request):
         print(e)
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(request.POST.get('id')) + "] bestaat niet"}, safe=True)
     try:
+        if request.POST.get('firstName') != '':
+            userObject.first_name = request.POST.get('firstName')
+            userObject.save()
+        if request.POST.get('lastName') != '':
+            userObject.last_name = request.POST.get('lastName')
+            userObject.save()
         if request.POST.get('bio') != '':
             userObject.bio = request.POST.get('bio')
+            userObject.save()
         if request.POST.get('organisation') != '':
             userObject.organisation = request.POST.get('organisation')
+            userObject.save()
         if request.POST.get('function') != '':
             userObject.function = request.POST.get('function')
+            userObject.save()
         if len(request.FILES) > 0:
             for fieldName in request.FILES:
                 file = request.FILES[fieldName]
                 fs = FileSystemStorage('./media/user/' + request.POST.get('id'))
                 filename = fs.save(file.name, file)
                 uploadedFileUrl = ('/user/' + request.POST.get('id') + '/' + (filename).replace("%20", ""))
-        
                 try:
                     userObject.profile_photo_path = uploadedFileUrl
+                    userObject.save()
                 except:
                     return JsonResponse({"bool": False, "msg": "Kon profiel foto niet aanpassen", "file": filename}, safe=True)
-                userObject.save()
         return JsonResponse({"bool": True, "msg": "Gebruiker aangepast"}, safe=True)
     except Exception as e:
         print(e)
