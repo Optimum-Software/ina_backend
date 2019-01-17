@@ -6,14 +6,12 @@ from .controllers import LoginController, DeviceController, FileController, Grou
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
     ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController
 
+
 urlpatterns = [
     # Authentication tutorial
     path('login',LoginController.LoginUser.as_view(),name='auth_user_login'),
 
     path('logout',LoginController.LogoutUser.as_view(),name='auth_user_logout'),
-
-    # BESTE FUNCTIE OOIT
-    path('test/', UserController.test, name="test"),
 
     #CHAT
     path("createChat", ChatController.createChat, name="createChat"), #Fields: user1Id, user2Id, chatUid
@@ -54,10 +52,12 @@ urlpatterns = [
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
     path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
+    path('uploadThumbnailForProject', ProjectController.uploadThumbnailForProject, name="uploadThumbnailForProject"),
     path('getAllProjectsNewestFirst', ProjectController.getAllProjectsNewestFirst, name="getAllProjectsNewestFirst"),
     path('getAllProjectsOldestFirst', ProjectController.getAllProjectsOldestFirst, name="getAllProjectsOldestFirst"),
     path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
     path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
+    path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
     path('createProject', ProjectController.createProject, name="createProject"),
 
     # PROJECTADMIN
@@ -82,7 +82,10 @@ urlpatterns = [
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
+    path('getAllTags', TagController.getAllTags, name="allTags"),
     path('getAllProjectTagsById/<int:id>', TagController.getAllProjectTagsById, name="getAllProjectTagsById"),
+    path('uploadPictureForTag', TagController.uploadPictureForTag, name="uploadPictureForTag"),
+    path('searchForTags', TagController.searchForTags, name="searchForTags"),
 
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),

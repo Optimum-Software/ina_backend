@@ -7,6 +7,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core.files.storage import FileSystemStorage
 from django.core import serializers
+from django.core.files.storage import FileSystemStorage
 
 
 @require_http_methods(['GET'])
@@ -24,21 +25,11 @@ def getAllProjects(request):
     try:
         projectObjects = Project.objects.all()
         for project in projectObjects:
-            fileObjectList = File.objects.filter(project=project).all()
-            url = ""
-            for file in fileObjectList:
-                try:
-                    type = file.path.split("/")[3]
-                except:
-                    break
-                if type[0:5] == "image":
-                    url = file.path
-                    break
-
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': url,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -59,11 +50,11 @@ def getAllProjectsNewestFirst(request):
     try:
         projectObjects = Project.objects.order_by('created_at').all()
         for project in projectObjects:
-            fileObject = File.objects.get(project=project)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': fileObject.path,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -83,11 +74,11 @@ def getAllProjectsOldestFirst(request):
     try:
         projectObjects = Project.objects.order_by('-created_at').all()
         for project in projectObjects:
-            fileObject = File.objects.get(project=project)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': fileObject.path,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -107,11 +98,11 @@ def getAllProjectsMostLikedFirst(request):
     try:
         projectObjects = Project.objects.order_by('-like_count').all()
         for project in projectObjects:
-            fileObject = File.objects.get(project=project)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': fileObject.path,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -131,11 +122,11 @@ def getAllProjectsMostFollowsFirst(request):
     try:
         projectObjects = Project.objects.order_by('-follower_count').all()
         for project in projectObjects:
-            fileObject = File.objects.get(project=project)
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'url': fileObject.path,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
@@ -201,3 +192,37 @@ def createProject(request):
         print("Exceptie print:")
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon project niet aanmaken"}, safe=True)
+
+
+@require_http_methods(['POST'])
+def uploadThumbnailForProject(request):
+    for fieldName in request.FILES:
+        file = request.FILES[fieldName]
+        projectId = fieldName.split("_")[0]
+        try:
+            projectObject = Project.objects.get(pk=projectId)
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
+        fs = FileSystemStorage('./media/project/' + projectId)
+        filename = fs.save(file.name, file)
+        uploadedFileUrl = ('/project/' + projectId + "/" + filename).replace("%20", "")
+
+        try:
+            projectObject.thumbnail = uploadedFileUrl
+            projectObject.save()
+        except:
+            return JsonResponse({"bool": False, "msg": "Kon foto niet opslaan", "file": filename}, safe=True)
+    return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
+
+@require_http_methods(['POST'])
+def searchForProjects(request):
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        resultList = Project.objects.filter(name__icontains=data['searchTerm']).all()
+        projects = []
+        for result in resultList:
+            projects.append(result.__repr__())
+        return JsonResponse({"bool": True, "msg": "Zoeken is gelukt", "projects": projects})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan tijdens het zoeken"})
