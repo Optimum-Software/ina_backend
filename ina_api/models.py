@@ -3,15 +3,15 @@ from django.db import models
 
 class User(models.Model):
     email = models.CharField(max_length=50, unique=True)
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     bio = models.TextField(max_length=2000)
     password = models.CharField(max_length=200)
     salt = models.CharField(max_length=50, null=True)
     mobile = models.CharField(max_length=22)
-    organisation = models.CharField(max_length=200)  # optional, example: Hanzehogeschool Groningen
-    function = models.CharField(max_length=200)  # optional, example: Docent Software Engineering
-    profile_photo_path = models.CharField(max_length=1000)
+    organisation = models.CharField(max_length=50)  # optional, example: Hanzehogeschool Groningen
+    function = models.CharField(max_length=50)  # optional, example: Docent Software Engineering
+    profile_photo_path = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now=True)
     passwordVerification = models.CharField(max_length=10, null=True)
 
