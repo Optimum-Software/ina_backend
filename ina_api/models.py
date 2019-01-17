@@ -80,9 +80,10 @@ class Member(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
+    thumbnail = models.CharField(max_length=200)
     desc = models.TextField(max_length=3000)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateTimeField(null=True)
+    end_date = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     follower_count = models.IntegerField(default=0)
@@ -102,6 +103,7 @@ class Project(models.Model):
         return {
             "id": self.pk,
             "name": self.name,
+            "thumbnail": self.thumbnail,
             "desc": self.desc,
             "startDate": self.start_date,
             "endDate": self.end_date,
