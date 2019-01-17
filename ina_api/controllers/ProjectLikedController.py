@@ -58,7 +58,6 @@ def getAllLikedProjectsById(request,id):
         if (projectLikes):
             for project in projectLikes:
                 fileObject = File.objects.get(project=project)
-                print(project)
                 projectList.append({
                     'id': project.id,
                     'name': project.name,
@@ -77,3 +76,19 @@ def getAllLikedProjectsById(request,id):
             return JsonResponse({"bool": False, "msg": "you have not like any projects"}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "failed to get your likes"}, safe=True)
+
+@require_http_methods(['GET'])
+def getLikedProjectsByUserId(request, user_id):
+    try:
+        userObject = User.objects.get(pk=user_id)
+        likedList = Project_Liked.objects.filter(user=userObject).all()
+        projectsLiked= []
+        if (likedList):
+            for entry in likedList:
+                projectObject = entry.project.__repr__()
+                projectsLiked.append(projectObject)
+            return JsonResponse({"bool": True, "found": True, "msg": "Gelikedte projecten gevonden", "projects": projectsLiked})
+        else:
+            return JsonResponse({"bool": True, "found": True, "msg": "Je hebt geen projecten geliked"})
+    except:
+        return JsonResponse({"bool": False, "msg": "Kon gelikedte projecten niet ophalen"})

@@ -70,9 +70,10 @@ fabric.properties
 
 #Django
 __pycache__/
-.ina_api/__pycache__/
-.ina_backend/__pycache__/
-.ina_api/controllers/__pycache__/
+/ina_api/__pycache__/
+/ina_backend/__pycache__/
+/ina_api/controllers/__pycache__/
+/ina_api/controllers/config.json
 *.py[cod]
 
 .media/

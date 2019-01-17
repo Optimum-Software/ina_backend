@@ -6,6 +6,11 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 import requests
+import os.path
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+json_data = open(os.path.join(BASE,'config.json'))
+secretData = json.load(json_data)
 
 @require_http_methods(["POST"])
 def sendMsgToUser(request):
@@ -16,10 +21,9 @@ def sendMsgToUser(request):
         except:
             return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
-            print(userObject.id)
             deviceObject = Device.objects.filter(user=userObject).first()
-            apiKey = "NjBmM2NhY2MtOTcyNi00OGNkLWI2NWUtMWM0ZTEwY2U0YmZj"
-            appId = "33abe35a-5325-45cc-bbee-074d6cc1d558"
+            apiKey = secretData['ONE_SIGNAL_APIKEY']
+            appId = secretData['ONE_SIGNAL_APIID']
             header = {"Content-Type": "application/json; charset=utf-8",
                       "Authorization": "Basic " + apiKey}
       

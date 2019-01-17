@@ -35,18 +35,18 @@ def getMemberById(request, id):
     try:
         memberObject = Member.objects.get(pk=id)
         userObject = memberObject.user.__repr__()
-        groupObject = memberObject.group.__repr__()
+        projectObject = memberObject.project.__repr__()
         memberJson = serializers.serialize('json', [ memberObject, ])
-        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
 
 
 @require_http_methods(['GET'])
-def getMembersByGroupId(request, group_id):
+def getMembersByProjectId(request, project_id):
     memberList = []
     try:
-        memberObjects = Member.objects.filter(group=group_id).all()
+        memberObjects = Member.objects.filter(project=project_id).all()
         for member in memberObjects:
             userObject = member.user.__repr__()
             memberList.append({
@@ -60,6 +60,22 @@ def getMembersByGroupId(request, group_id):
         return JsonResponse({"bool": True, "msg": "Members found for project", "members": memberList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
+
+@require_http_methods(['GET'])
+def getMembersByUserId(request, user_id):
+    try:
+        userObject = User.objects.get(pk=user_id)
+        memberList = Member.objects.filter(user=userObject).all()
+        projectsMembered = []
+        if (memberList):
+            for entry in memberList:
+                projectObject = entry.project.__repr__()
+                projectsMembered.append(projectObject)
+            return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
+        else:
+            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten"})
+    except:
+        return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
 
 
 @require_http_methods(['POST'])
