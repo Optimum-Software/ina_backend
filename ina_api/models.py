@@ -56,30 +56,12 @@ class Group(models.Model):
 
         }
 
-
-class Member(models.Model):
-    status = models.BooleanField(default=False)
-    messsage = models.TextField(max_length=1000)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return '{} : {}'.format(self.group, self.user)
-
-    def __repr__(self):
-        return {
-            "id": self.pk,
-            "project": self.group,
-            "user": self.user
-        }
-
-
 class Project(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     desc = models.TextField(max_length=3000)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=17)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     follower_count = models.IntegerField(default=0)
@@ -111,6 +93,19 @@ class Project(models.Model):
             "thumbnail": self.thumbnail,
         }
 
+class Member(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} : {}'.format(self.project, self.user)
+
+    def __repr__(self):
+        return {
+            "id": self.pk,
+            "project": self.project,
+            "user": self.user
+        }
 
 class Group_Admin(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
@@ -171,6 +166,25 @@ class Project_Liked(models.Model):
             "user": self.user
         }
 
+class Project_Update(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    content = models.CharField(max_length=3000)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    def __repr__(self):
+        return {
+            'id': self.pk,
+            'project': self.project.__repr__(),
+            'creator' : self.user.__repr__(),
+            'title': self.title,
+            'content' : self.content,
+            'created_at': self.created_at
+        }
 
 class Project_Favorite(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)

@@ -28,15 +28,15 @@ def getAllProjects(request):
             projectList.append({
                 'id': project.id,
                 'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
                 'desc': project.desc,
                 'start_date': project.start_date,
                 'end_date': project.end_date,
                 'created_at': project.created_at,
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
-                'location': project.location
+                'location': project.location,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -151,38 +151,47 @@ def createProject(request):
         if end_date == "":
             end_date = None
 
+        creatorId= request.POST.get('creatorId')
+        creator = User.objects.get(pk=creatorId)
         project = Project(
             name=request.POST.get('name'),
             thumbnail="",
             desc=request.POST.get('desc'),
             location=request.POST.get('location'),
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            creator=creator
         )
         project.save()
 
         projectId = project.pk
-        print(projectId)
+
         # save thumnail and save path in project
-        # thumbnail = request.FILES.get("thumbnail")
-        #
-        # print("THUMBNAIL print")
-        # print(thumbnail)
-        # fs = FileSystemStorage('./media/project/' + projectId)
-        # thumbnailPath = fs.save(thumbnail.name, thumbnail)
-        # project.thumbnail = thumbnailPath
+        thumbnail = request.FILES.get("thumbnail")
+        print(thumbnail)
+        fs = FileSystemStorage('./media/project/' + str(projectId))
+        thumbnailPath = fs.save(thumbnail.name, thumbnail)
+        uploadedFileUrl = ('/project/' + str(projectId) + '/' + thumbnailPath)
+        project.thumbnail = uploadedFileUrl
+        project.save()
 
         # save all documents of project
         if len(request.FILES) > 0:
             for fieldName in request.FILES:
                 try:
-                    print(fieldName)
+                    if fieldName == "thumbnail":
+                        continue
+
                     file = request.FILES[fieldName]
-                    fs = FileSystemStorage('./media/project/' + projectId)
+                    fs = FileSystemStorage('./media/project/' + str(projectId))
                     filename = fs.save(file.name, file)
-                    uploadedFileUrl = ('/project/' + projectId + '/' + filename.replace("%20", ""))
-                    newFile = File(project=projectId, path=uploadedFileUrl)
+
+                    uploadedFileUrl = ('/project/' + str(projectId) + '/' + filename.replace("%20", ""))
+
+                    newFile = File(project=project, path=uploadedFileUrl)
+
                     newFile.save()
+
                 except Exception as e:
                     print(e)
         else:

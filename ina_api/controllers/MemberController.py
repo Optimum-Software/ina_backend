@@ -10,22 +10,21 @@ from django.core import serializers
 @require_http_methods(['POST'])
 def getMember(request):
     data = json.loads(request.body.decode('utf-8'))
-    group_id = data['groupId']
-    user_id = data['userId']
+
     try:
         try:
-            userObject = User.objects.get(pk=user_id)
+            userObject = User.objects.get(pk=data['userId'])
         except:
             return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
-            groupObject = Group.objects.get(pk=group_id)
+            projectObject = Project.objects.get(pk=data['projectId'])
         except:
-            return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['groupId']) + "] bestaat niet"}, safe=True)
-        memberObject = Member.objects.filter(user=userObject, group=groupObject).first()
+            return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['projectId']) + "] bestaat niet"}, safe=True)
+        memberObject = Member.objects.filter(user=userObject, project=projectObject).first()
         userObject = memberObject.user.__repr__()
-        groupObject = memberObject.group.__repr__()
+        projectObject = memberObject.project.__repr__()
         memberJson = serializers.serialize('json', [ memberObject, ])
-        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
 
@@ -35,18 +34,18 @@ def getMemberById(request, id):
     try:
         memberObject = Member.objects.get(pk=id)
         userObject = memberObject.user.__repr__()
-        groupObject = memberObject.group.__repr__()
+        projectObject = memberObject.project.__repr__()
         memberJson = serializers.serialize('json', [ memberObject, ])
-        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "group": groupObject}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Deelnemer bestaat", "member": memberJson, "user": userObject, "project": projectObject}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Deelnemer bestaat niet"}, safe=True)
 
 
 @require_http_methods(['GET'])
-def getMembersByGroupId(request, group_id):
+def getMembersByProjectId(request, project_id):
     memberList = []
     try:
-        memberObjects = Member.objects.filter(group=group_id).all()
+        memberObjects = Member.objects.filter(project=project_id).all()
         for member in memberObjects:
             userObject = member.user.__repr__()
             memberList.append({
@@ -61,6 +60,22 @@ def getMembersByGroupId(request, group_id):
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
 
+@require_http_methods(['GET'])
+def getMembersByUserId(request, user_id):
+    try:
+        userObject = User.objects.get(pk=user_id)
+        memberList = Member.objects.filter(user=userObject).all()
+        projectsMembered = []
+        if (memberList):
+            for entry in memberList:
+                projectObject = entry.project.__repr__()
+                projectsMembered.append(projectObject)
+            return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
+        else:
+            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten"})
+    except:
+        return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
+
 
 @require_http_methods(['POST'])
 def createMember(request):
@@ -71,12 +86,12 @@ def createMember(request):
         except:
             return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
-            groupObject = Group.objects.get(pk=data['groupId'])
+            projectObject = Project.objects.get(pk=data['projectId'])
         except:
-            return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['groupId']) + "] bestaat niet"}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Project met id [" + str(data['projectId']) + "] bestaat niet"}, safe=True)
         try:
-            if not Member.objects.filter(user=userObject, group=groupObject).exists():
-                memberObject = Member(user=userObject, group=groupObject)
+            if not Member.objects.filter(user=userObject, project=projectObject).exists():
+                memberObject = Member(user=userObject, project=projectObject)
                 memberObject.save()
                 return JsonResponse({"bool": True, "msg": "Deelnemer aangemaakt", "id": memberObject.pk}, safe=True)
             else:
@@ -91,7 +106,7 @@ def createMember(request):
 def deleteMember(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        memberObject = Member.objects.filter(user=data['userId'], group=data['groupId']).first()
+        memberObject = Member.objects.filter(user=data['userId'], project=data['projectId']).first()
         try:
             memberObject.delete()
             return JsonResponse({"bool": True, "msg": "Deelnemer verwijderd"}, safe=True)

@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController, ProjectUpdateController
 
 
 urlpatterns = [
@@ -44,7 +44,8 @@ urlpatterns = [
     path('getMemberById/<int:id>', MemberController.getMemberById, name='getMemberById'),
     path('deleteMember', MemberController.deleteMember, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
-    path('getMembersByGroupId/<int:group_id>', MemberController.getMembersByGroupId, name='getMembersByGroupId'),
+    path('getMembersByProjectId/<int:project_id>', MemberController.getMembersByProjectId, name='getMembersByProjectId'),
+    path('getMembersByUserId/<int:user_id>', MemberController.getMembersByUserId, name='getMembersByUserId'),
 
     #MESSAGE
     path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId
@@ -70,15 +71,19 @@ urlpatterns = [
     # PROJECTFOLLOWED
     path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
-    path('getAllFollowedProjectsById/<int:id>', ProjectFollowedController.getAllFollowedProjectsById, name="getAllFollowedProjectsById"),
+    path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
     path('likeProjectById', ProjectLikedController.likeProjectById, name="likeProjectById"),
     path('getAllLikedProjectsById/<int:id>', ProjectLikedController.getAllLikedProjectsById, name="getAllLikedProjectsById"),
+    path('getLikedProjectsByUserId/<int:user_id>', ProjectLikedController.getLikedProjectsByUserId, name="getLikedProjectsByUserId"),
 
     # PROJECTTAG
     path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
+
+    # PROJECTUPDATE
+    path('addProjectUpdate', ProjectUpdateController.addUpdate, name="addUpdate"), #fields: project, user, title, content
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
