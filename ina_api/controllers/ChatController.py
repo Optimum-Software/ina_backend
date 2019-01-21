@@ -16,6 +16,16 @@ def createChat(request):
         user2Object = User.objects.get(pk=data['user2Id'])
     except:
         return JsonResponse({"bool": False, "msg": "gebruiker met id [" + str(data['user2Id']) + "] bestaat niet"}, safe=True)
+
+    try:
+        chat = Chat.objects.filter(user1=user1Object, user2=user2Object).first()
+        if not chat:
+            print(chat)
+        else:
+            return JsonResponse({"bool": True, "msg": "Chat bestaat al", "chat": chat.__repr__()})
+    except:
+        JsonResponse({"bool": False, "msg": "Kon chat niet aanmaken"})
+
     try:
         chatObject = Chat(user1=user1Object, user2=user2Object, chat_uid=data['chatUid'])
         chatObject.save()
@@ -40,7 +50,7 @@ def getChatsForUser(request, id):
         chatList.append(chatItem)
 
     for chat in querySetGroupChats:
-        chatItem = chat.group.__repr__()
+        chatItem = chat.project.__repr__()
         chatItem['group'] = True
         chatList.append(chatItem)
 
