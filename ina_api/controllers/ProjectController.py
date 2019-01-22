@@ -33,7 +33,8 @@ def getAllProjects(request):
                 'created_at': project.created_at,
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
-                'location': project.location
+                'location': project.location,
+                'images' : ['https://static1.squarespace.com/static/56a1a9ccab2810f339a5235b/t/56aeccee20c6474b886903e9/1454296490612/Project.jpeg', 'https://udemy-images.udemy.com/course/750x422/418102_3c86_3.jpg']
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
