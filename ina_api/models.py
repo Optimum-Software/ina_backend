@@ -59,9 +59,9 @@ class Group(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=50)
     desc = models.TextField(max_length=3000)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=23)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateTimeField(null=True)
+    end_date = models.DateTimeField(null=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     created_at = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     follower_count = models.IntegerField(default=0)
