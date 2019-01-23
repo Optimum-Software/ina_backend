@@ -142,7 +142,7 @@ class File(models.Model):
     path = models.CharField(max_length=1000)
 
     def __str__(self):
-        return '{} : {}'.format(self.project, self.path)
+        return self.path
 
     def __repr__(self):
         return {
