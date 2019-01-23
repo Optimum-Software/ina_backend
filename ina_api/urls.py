@@ -6,6 +6,7 @@ from .controllers import LoginController, DeviceController, FileController, Grou
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
     ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController, ProjectUpdateController
 
+
 urlpatterns = [
     # Authentication tutorial
     path('login',LoginController.LoginUser.as_view(),name='auth_user_login'),
@@ -58,6 +59,7 @@ urlpatterns = [
     path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
     path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
     path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
+    path('createProject', ProjectController.createProject, name="createProject"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
