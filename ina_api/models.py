@@ -180,7 +180,7 @@ class Project_Update(models.Model):
         return {
             'id': self.pk,
             'project': self.project.__repr__(),
-            'creator' : self.user.__repr__(),
+            'creator' : self.creator.__repr__(),
             'title': self.title,
             'content' : self.content,
             'created_at': self.created_at

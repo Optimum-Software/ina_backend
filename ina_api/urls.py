@@ -82,6 +82,7 @@ urlpatterns = [
 
     # PROJECTUPDATE
     path('addProjectUpdate', ProjectUpdateController.addUpdate, name="addUpdate"), #fields: project, user, title, content
+    path('getProjectUpdatesByProjectId/<int:project_id>', ProjectUpdateController.getProjectUpdatesByProjectId, name="getUpdates"),
 
     # TAG
     path('getTagById/<int:id>', TagController.getTagById, name="tagById"),
