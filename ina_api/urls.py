@@ -60,6 +60,7 @@ urlpatterns = [
     path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
     path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
     path('createProject', ProjectController.createProject, name="createProject"),
+    path('getProjectsByTag', ProjectController.getProjectsByTag, name="getProjectsByTag"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
@@ -100,6 +101,8 @@ urlpatterns = [
     path('updateUser', UserController.updateUser, name="updateUser"),
     path('passwordForgotVerification', UserController.sendPasswordVerification, name="sendPasswordVerification"),
     path('changePassword', UserController.changePassword, name="changePassword"),
+    path('getUserSettings/<int:id>', UserController.getUserSettings, name="getUserSettings"),
+    path('saveUserSettings', UserController.saveUserSettings, name="saveUserSettings"),
     # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
 
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id

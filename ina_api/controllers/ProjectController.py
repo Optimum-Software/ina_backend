@@ -270,7 +270,6 @@ def createProject(request):
 
                     if 'video' in mimetypes.guess_type(str(file))[0]:
                       clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
-                      print(clip)
                       clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg', t=0.00)
                       uploadedThumbnailUrl = ('/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20", "") + '.jpg')
                       newThumbnail = File(project=project, path=uploadedThumbnailUrl)
@@ -323,3 +322,17 @@ def searchForProjects(request):
         return JsonResponse({"bool": True, "msg": "Zoeken is gelukt", "projects": projects})
     except Exception as e:
         return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan tijdens het zoeken"})
+
+@require_http_methods(['POST'])
+def getProjectsByTag(request):
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        tagObject = Tag.objects.get(name=data['tagName'])
+        projectList = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
+        returnList = []
+        for project in projectList:
+            returnList.append(Project.objects.get(pk=project).__repr__())
+        return JsonResponse({"bool": True, "msg": "Projecten gevonden", "projects": returnList})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan"})

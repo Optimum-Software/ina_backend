@@ -43,7 +43,9 @@ def addUpdate(request):
         memberList = Member.objects.filter(project=projectObject).values_list('user', flat=True)
         deviceList = []
         for id in memberList:
-            deviceList.append(Device.objects.get(user=id).device_name)     
+            deviceObject = Device.objects.get(user=id)
+            if deviceObject.canNotificate:
+                deviceList.append(deviceObject.device_name)     
         apiKey = secretData['ONE_SIGNAL_APIKEY']
         appId = secretData['ONE_SIGNAL_APIID']
         header = {"Content-Type": "application/json; charset=utf-8",

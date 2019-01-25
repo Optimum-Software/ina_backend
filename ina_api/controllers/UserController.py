@@ -43,6 +43,36 @@ def getUserByEmail(request):
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle velden mee aub"}, safe=True)
 
+@require_http_methods(['GET'])
+def getUserSettings(request, id):
+    try:
+        userObject = User.objects.get(pk=id)
+
+        #canNotificate
+        canNotificate = Device.objects.get(user=userObject).canNotificate
+        settingsData = {
+            'canNotificate': canNotificate
+        }
+        return JsonResponse({"bool": True, "msg": "Instellingen opgehaald", "settings": settingsData})
+    except:
+        return JsonResponse({"bool": False, "msg": "Er ging wat mis met het ophalen van deze instellingen"})
+
+@require_http_methods(['POST'])
+def saveUserSettings(request):
+    data = json.loads(request.body.decode('utf-8'))
+    try:
+        userObject = User.objects.get(pk=data['userId'])
+
+        #canNotificate
+        deviceObject = Device.objects.get(user=userObject)
+        deviceObject.canNotificate = data['canNotificate']
+        deviceObject.save()
+
+        return JsonResponse({"bool": True, "msg": "Instellingen opgeslagen"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Kon de instellingen niet opslaan"})
+
 
 @require_http_methods(['POST'])
 def sendPasswordVerification(request):

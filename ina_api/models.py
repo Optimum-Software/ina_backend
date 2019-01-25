@@ -219,6 +219,7 @@ class Project_Followed(models.Model):
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     device_name = models.CharField(max_length=100)
+    canNotificate = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} : {}'.format(self.user, self.device_name)
@@ -227,7 +228,8 @@ class Device(models.Model):
         return {
             "id": self.pk,
             "user": self.user,
-            "device_name": self.device_name
+            "device_name": self.device_name,
+            "canNotificate": self.canNotificate
         }
 
 
