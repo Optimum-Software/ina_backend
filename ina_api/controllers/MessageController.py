@@ -22,17 +22,20 @@ def sendMsgToUser(request):
             return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
             deviceObject = Device.objects.filter(user=userObject).first()
-            apiKey = secretData['ONE_SIGNAL_APIKEY']
-            appId = secretData['ONE_SIGNAL_APIID']
-            header = {"Content-Type": "application/json; charset=utf-8",
+            if deviceObject.canNotificate:
+                apiKey = secretData['ONE_SIGNAL_APIKEY']
+                appId = secretData['ONE_SIGNAL_APIID']
+                header = {"Content-Type": "application/json; charset=utf-8",
                       "Authorization": "Basic " + apiKey}
       
-            payload = {"app_id": appId,
-               "include_player_ids": [deviceObject.device_name],
-               "contents": {"en": "Je hebt nieuwe berichten"},
-               "headings": {"en": "ina"}}
-            req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
-            return JsonResponse({"bool": True, "msg": "Bericht verstuurt"}, safe=True)
+                payload = {"app_id": appId,
+                    "include_player_ids": [deviceObject.device_name],
+                    "contents": {"en": "Je hebt nieuwe berichten"},
+                    "headings": {"en": "ina"}}
+                req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
+                return JsonResponse({"bool": True, "msg": "Bericht verstuurt"}, safe=True)
+            else:
+                return JsonResponse({"bool": False, "msg": "Gebruiker heeft notificaties uitstaan"})
         except:
             return JsonResponse({"bool": False, "msg": "Er is geen device"}, safe=True)
     except:
