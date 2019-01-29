@@ -26,6 +26,7 @@ def getAllTags(request):
         return JsonResponse({"bool": True, "msg": "Tags opgehaald", "tags": tagList})
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Het is niet gelukt om tags op te halen"})
+
 @require_http_methods(['GET'])
 def getAllProjectTagsById(request,id):
     tagList = []
