@@ -15,8 +15,38 @@ import mimetypes
 @require_http_methods(['GET'])
 def getProjectById(request, id):
     try:
-        projectObject = Project.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "Project bestaat", "project": projectObject}, safe=True)
+        project = Project.objects.get(pk=id)
+        print("komt hier")
+        imageList = []
+        fileList = []
+        try:
+            fileObjects = File.objects.filter(project=project)
+            for file in fileObjects:
+                print(mimetypes.guess_type(str(file))[0])
+                if 'image' in mimetypes.guess_type(str(file))[0]:
+                    imageList.append(str(file))
+                elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                    fileList.append(str(file))
+        except ObjectDoesNotExist:
+            print("OEPS")
+        imageList.append(project.thumbnail)
+        project = {
+            'id': project.id,
+            'name': project.name,
+            'thumbnail': project.thumbnail,
+            'creator': project.creator.__repr__(),
+            'desc': project.desc,
+            'start_date': project.start_date,
+            'end_date': project.end_date,
+            'created_at': project.created_at,
+            'like_count': project.like_count,
+            'follower_count': project.follower_count,
+            'location': project.location,
+            'images' : imageList,
+            'files' : fileList,
+        }
+
+        return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
 
@@ -293,6 +323,29 @@ def createProject(request):
                     print(e)
         else:
             print("er zijn geen bestanden in request.files")
+
+        # add Tags
+        try:
+            tags = []
+            for fieldName in request.POST:
+                if "#" in fieldName:
+                    tags.append(request.POST.get(fieldName))
+                    print(tags)
+            if len(tags) > 0:
+                for tag in tags:
+                    if Tag.objects.filter(name=tag).exists():
+                        tagObject = Tag.objects.filter(name=tag).first()
+                        projectTag = Project_Tag(tag=tagObject, project=project)
+                        projectTag.save()
+                    else:
+                        newTag = Tag(name=tag, thumbnail="")
+                        newTag.save()
+                        projectTag = Project_Tag(tag=newTag, project=project)
+                        projectTag.save()
+        except:
+            print("kon tags niet toevoegen")
+        print("Project.pk")
+        print(project.pk)
         return JsonResponse({"bool": True, "msg": "Project aangemaakt", "id": project.pk}, safe=True)
     except Exception as e:
         print("Exceptie print:")
