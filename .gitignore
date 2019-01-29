@@ -76,7 +76,7 @@ __pycache__/
 /ina_api/controllers/config.json
 *.py[cod]
 
-.media/
+media/
 
 # settings
 /ina_backend/settings.py
