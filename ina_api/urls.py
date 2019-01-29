@@ -4,7 +4,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController, ProjectUpdateController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController,  \
+    MessageController, ChatController, ProjectUpdateController, NotificationController
 
 
 urlpatterns = [
@@ -48,7 +49,11 @@ urlpatterns = [
     path('getMembersByUserId/<int:user_id>', MemberController.getMembersByUserId, name='getMembersByUserId'),
 
     #MESSAGE
-    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId
+    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId, chatId
+
+    #NOTIFICATION
+    path("getNotificationByUser/<int:id>", NotificationController.getNotificationByUser, name="getNotificationByUser"),
+    path("markAsRead/<int:id>", NotificationController.markAsRead, name="markAsRead"),
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),

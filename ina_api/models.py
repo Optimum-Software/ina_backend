@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class User(models.Model):
     email = models.CharField(max_length=50, unique=True)
@@ -37,7 +37,7 @@ class Group(models.Model):
     name = models.CharField(max_length=100, unique=True)
     desc = models.TextField(max_length=2000)
     photo_path = models.CharField(max_length=1000)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now())
     member_count = models.IntegerField(default=0)
     public = models.BooleanField(default=True)
 
@@ -61,8 +61,8 @@ class Project(models.Model):
     desc = models.TextField(max_length=3000)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    created_at = models.DateTimeField(auto_now=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now())
     like_count = models.IntegerField(default=0)
     follower_count = models.IntegerField(default=0)
     location = models.CharField(max_length=200)
@@ -121,7 +121,6 @@ class Group_Admin(models.Model):
             "user": self.user
         }
 
-
 class Project_Admin(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -171,7 +170,7 @@ class Project_Update(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.CharField(max_length=3000)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return self.title
@@ -281,7 +280,7 @@ class Chat(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
     chat_uid = models.CharField(max_length=10, unique=True)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return self.chat_uid
@@ -293,4 +292,32 @@ class Chat(models.Model):
             "user2": self.user2.__repr__(),
             "chatUid": self.chat_uid,
             "createdAt": self.created_at
+        }
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    TYPES = {
+        (0, "Chat"),
+        (1, "Project")
+    }
+
+    type = models.IntegerField(choices=TYPES)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, blank=True, null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now())
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.created_at)
+
+    def __repr__(self):
+        return {
+            "id": self.pk,
+            "user": self.user.__repr__(),
+            "type": self.type,
+            "chat": self.chat.__repr__(),
+            "project": self.project.__repr__(),
+            "createdAt": self.created_at,
+            "read": self.read,
         }

@@ -32,7 +32,7 @@ def addUpdate(request):
         try:
             projectObject = Project.objects.get(pk=data['project'])
         except:
-            return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['user']) + "] bestaat niet"})
+            return JsonResponse({"bool": False, "msg": "Project met id [" + str(data['project']) + "] bestaat niet"})
 
         if data['title'] == '' or data['content'] == '':
             return JsonResponse({"bool": False, "msg": "Update moet een title en inhoud bevatten"})
@@ -41,11 +41,35 @@ def addUpdate(request):
         updateObject.save()
 
         memberList = Member.objects.filter(project=projectObject).values_list('user', flat=True)
+        followerList = Project_Followed.objects.filter(project=projectObject).values_list('user', flat=True)
         deviceList = []
-        for id in memberList:
-            deviceObject = Device.objects.get(user=id)
-            if deviceObject.canNotificate:
-                deviceList.append(deviceObject.device_name)     
+        if memberList.exists():
+            for id in memberList:
+                deviceObject = Device.objects.get(user=id)
+                if deviceObject.canNotificate:
+                    deviceList.append(deviceObject.device_name)
+                    try:
+                        notObject = Notification(user=deviceObject.user, type=1, chat=None, project=projectObject)
+                        notObject.save()
+                    except Exception as e:
+                        print(e)
+        if followerList.exists():
+            for id in followerList:
+                deviceObject = Device.objects.get(user=id)
+                if deviceObject.canNotificate:
+                    #check if the user wasn't already a member
+                    unique = True
+                    for index in deviceList:
+                        if deviceList[index] == deviceObject.device_name:
+                            unique = False
+                            break
+                    if unique:
+                        deviceList.append(deviceObject.device_name)
+                        try:
+                            notObject = Notification(user=deviceObject.user, type=1, chat=None, project=projectObject)
+                            notObject.save()
+                        except Exception as e:
+                            print(e)
         apiKey = secretData['ONE_SIGNAL_APIKEY']
         appId = secretData['ONE_SIGNAL_APIID']
         header = {"Content-Type": "application/json; charset=utf-8",
