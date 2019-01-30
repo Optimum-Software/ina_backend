@@ -61,6 +61,7 @@ urlpatterns = [
     path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
     path('createProject', ProjectController.createProject, name="createProject"),
     path('getProjectsByTag', ProjectController.getProjectsByTag, name="getProjectsByTag"),
+    path('editProject', ProjectController.editProject, name="editProject"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),

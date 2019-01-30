@@ -275,9 +275,9 @@ def createProject(request):
 
         # save thumnail and save path in project
         thumbnail = request.FILES.get("thumbnail")
-        fs = FileSystemStorage('./media/project/' + str(projectId))
-        thumbnailPath = fs.save(thumbnail.name + '.jpg', thumbnail)
-        uploadedFileUrl = ('/project/' + str(projectId) + '/' + thumbnailPath)
+        fs = FileSystemStorage('./media/project/' + str(projectId) + "/thumbnail")
+        thumbnailPath = fs.save(thumbnail.name, thumbnail)
+        uploadedFileUrl = ('/project/' + str(projectId) + '/thumbnail/' + thumbnailPath)
         project.thumbnail = uploadedFileUrl
         project.save()
 
@@ -337,11 +337,149 @@ def createProject(request):
                         projectTag.save()
         except:
             print("kon tags niet toevoegen")
-        print("Project.pk")
-        print(project.pk)
         return JsonResponse({"bool": True, "msg": "Project aangemaakt", "id": project.pk}, safe=True)
     except Exception as e:
         return JsonResponse({"bool": False, "msg": "Kon project niet aanmaken"}, safe=True)
+
+
+
+@require_http_methods(['POST'])
+def editProject(request):
+    try:
+        projectId = request.POST.get('projectId')
+
+        projectObject = Project.objects.get(pk=projectId)
+
+        name = request.POST.get('name')
+        if projectObject.name != name:
+            projectObject.name = name
+        desc = request.POST.get('desc')
+        if projectObject.desc != desc:
+            projectObject.desc = desc
+        location = request.POST.get('location')
+        if projectObject.location != location:
+            projectObject.location = location
+
+        start_date = request.POST.get('beginDate')
+        if start_date == "" or start_date == "undefined" or start_date == "null":
+            start_date = None
+        if projectObject.start_date != start_date:
+            projectObject.start_date = start_date
+
+        end_date = request.POST.get('endDate')
+        if end_date == "" or end_date == "undefined" or end_date == "null":
+            end_date = None
+        if projectObject.end_date != end_date:
+            projectObject.end_date = end_date
+        projectObject.save()
+        print("first fields succesfully updated")
+
+
+        # update thumbnail if needed
+        try:
+            print(request.FILES)
+            thumbnail = request.FILES["thumbnail"]
+            fs = FileSystemStorage('./media/project/' + str(projectId) + "/thumbnail")
+            print(thumbnail)
+            print(thumbnail.name)
+            filesInThumbnailDir = fs.listdir('./')[1]
+            print(filesInThumbnailDir)
+            if thumbnail.name not in filesInThumbnailDir:
+                fs.delete(filesInThumbnailDir[0])
+                thumbnailPath = fs.save(thumbnail.name, thumbnail)
+                uploadedFileUrl = ('/project/' + str(projectId) + '/thumbnail/' + thumbnailPath)
+                projectObject.thumbnail = uploadedFileUrl
+                projectObject.save()
+                newFile = File(project=projectObject, path=uploadedFileUrl)
+                newFile.save()
+
+        except Exception as e:
+            print("thumbnail error")
+            print(e)
+
+        print("thumbnail succesfully updated")
+
+        # update other files if needed
+        if len(request.FILES) > 0:
+            fs = FileSystemStorage('./media/project/' + str(projectId))
+
+            allFilesInDir = fs.listdir('./')[1]
+            print(request.FILES)
+
+            for fieldName in request.FILES:
+                file = request.FILES[fieldName]
+                print(file)
+                if fieldName == "thumbnail":
+                    continue
+                print(file.name)
+                if file.name in allFilesInDir:
+                    allFilesInDir.remove(file.name)
+                    continue
+                print("1")
+                savedFile = fs.save(file.name, file)
+                uploadedFileUrl = ('/project/' + str(projectId) + '/' + savedFile.replace("%20", ""))
+                print("2")
+                newFile = File(project=projectObject, path=uploadedFileUrl)
+                newFile.save()
+                print("3")
+                if 'video' in mimetypes.guess_type(str(file))[0]:
+                    clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
+                    clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg', t=0.00)
+                    uploadedThumbnailUrl = ('/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20", "") + '.jpg')
+                    newThumbnail = File(project=projectObject, path=uploadedThumbnailUrl)
+
+                    newThumbnail.save()
+
+                    uploadedFileUrl = ('/project/' + str(projectId) + '/' + savedFile.replace("%20", ""))
+
+                    newFile = File(project=projectObject, path=uploadedFileUrl)
+
+                    newFile.save()
+            if len(allFilesInDir) > 0:
+                for file in allFilesInDir:
+                    File.objects.get(project=projectObject, path='/project/' + str(projectId) + '/' + file).delete()
+                    fs.delete(file)
+                    allFilesInDir.remove(file)
+        print("other files succesfully updated")
+
+        # update tags if needed
+        try:
+            newTags = []
+            oldTags = []
+            for fieldName in request.POST:
+                if "#" in fieldName:
+                    newTags.append(request.POST.get(fieldName))
+            if len(newTags) > 0:
+                for tag in newTags:
+                    try:
+                        tagObject = Tag.objects.get(name=tag)
+                        if Project_Tag.objects.filter(tag=tagObject, project=projectObject).exists():
+                            continue
+                    except:
+                        None
+                    if Tag.objects.filter(name=tag).exists():
+                        tagObject = Tag.objects.filter(name=tag).first()
+                        projectTag = Project_Tag(tag=tagObject, project=projectObject)
+                        projectTag.save()
+                    else:
+                        newTag = Tag(name=tag, thumbnail="")
+                        newTag.save()
+                        projectTag = Project_Tag(tag=newTag, project=projectObject)
+                        projectTag.save()
+            # if len(oldTags) > 0:
+            #     for tag in oldTags:
+            #         tagObject = Tag.objects.filter(name=tag.name)
+            #         Project_Tag.objects.filter(tag=tagObject, project=projectObject).delete()
+        except Exception as e:
+            print(e)
+
+        return JsonResponse({"bool": True, "msg": "Project succesvol aangepast", "id": projectObject.pk}, safe=True)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Kon project niet aanpassen"}, safe=True)
+
+
+
 
 
 @require_http_methods(['POST'])
