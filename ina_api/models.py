@@ -203,6 +203,7 @@ class Project_Favorite(models.Model):
 class Project_Followed(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    canNotificate = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} : {}'.format(self.project, self.user)

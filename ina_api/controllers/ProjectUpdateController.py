@@ -41,7 +41,7 @@ def addUpdate(request):
         updateObject.save()
 
         memberList = Member.objects.filter(project=projectObject).values_list('user', flat=True)
-        followerList = Project_Followed.objects.filter(project=projectObject).values_list('user', flat=True)
+        followerList = Project_Followed.objects.filter(project=projectObject)
         deviceList = []
         if memberList.exists():
             for id in memberList:
@@ -54,27 +54,28 @@ def addUpdate(request):
                     except Exception as e:
                         print(e)
         if followerList.exists():
-            for id in followerList:
-                deviceObject = Device.objects.get(user=id)
+            for entry in followerList:
+                deviceObject = Device.objects.get(user=entry.user)
                 if deviceObject.canNotificate:
                     #check if the user wasn't already a member
                     unique = True
-                    for index in deviceList:
-                        if deviceList[index] == deviceObject.device_name:
+                    for deviceName in deviceList:
+                        if deviceName == deviceObject.device_name:
                             unique = False
                             break
                     if unique:
-                        deviceList.append(deviceObject.device_name)
-                        try:
-                            notObject = Notification(user=deviceObject.user, type=1, chat=None, project=projectObject)
-                            notObject.save()
-                        except Exception as e:
-                            print(e)
+                        if entry.canNotificate:
+                            print("can send Notification")
+                            deviceList.append(deviceObject.device_name)
+                            try:
+                                notObject = Notification(user=deviceObject.user, type=1, chat=None, project=projectObject)
+                                notObject.save()
+                            except Exception as e:
+                                print(e)
         apiKey = secretData['ONE_SIGNAL_APIKEY']
         appId = secretData['ONE_SIGNAL_APIID']
         header = {"Content-Type": "application/json; charset=utf-8",
                   "Authorization": "Basic " + apiKey}
-  
         payload = {"app_id": appId,
            "include_player_ids": deviceList,
            "contents": {"en": "Er is een update voor project: " + projectObject.name},
