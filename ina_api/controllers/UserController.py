@@ -182,8 +182,6 @@ def updateUser(request):
             userObject.save()
         if len(request.FILES) > 0:
             for fieldName in request.FILES:
-                print(fieldName)
-
                 file = request.FILES[fieldName]
                 fs = FileSystemStorage('./media/user/' + request.POST.get('id'))
                 filename = fs.save(file.name, file)
