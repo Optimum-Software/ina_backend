@@ -4,7 +4,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, MessageController, ChatController, ProjectUpdateController
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController,  \
+    MessageController, ChatController, ProjectUpdateController, NotificationController
 
 
 urlpatterns = [
@@ -48,7 +49,11 @@ urlpatterns = [
     path('getMembersByUserId/<int:user_id>', MemberController.getMembersByUserId, name='getMembersByUserId'),
 
     #MESSAGE
-    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId
+    path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId, chatId
+
+    #NOTIFICATION
+    path("getNotificationByUser/<int:id>", NotificationController.getNotificationByUser, name="getNotificationByUser"),
+    path("markAsRead/<int:id>", NotificationController.markAsRead, name="markAsRead"),
 
     # PROJECT
     path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
@@ -61,6 +66,7 @@ urlpatterns = [
     path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
     path('createProject', ProjectController.createProject, name="createProject"),
     path('getProjectsByTag', ProjectController.getProjectsByTag, name="getProjectsByTag"),
+    path('getSwipeProjects/<int:userId>', ProjectController.getSwipeProjects, name="getSwipeProjects"),
     path('editProject', ProjectController.editProject, name="editProject"),
 
     # PROJECTADMIN
@@ -74,6 +80,7 @@ urlpatterns = [
     path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
     path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
+    path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),

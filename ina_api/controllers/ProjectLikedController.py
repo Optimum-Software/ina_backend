@@ -35,19 +35,17 @@ def likeProjectById(request):
 
         try:
             if Project_Liked.objects.filter(project=projectObject).exists():
-                return JsonResponse({"bool": False, "msg": "Je hebt het project al een like gegeven", "likedCount": likedCount}, safe=True)
+                return JsonResponse({"bool": False, "msg": "Je hebt het project al een like gegeven", "likedCount": likedCount})
             else:
                 userObject = User.objects.get(pk=userId)
                 projectLiked = Project_Liked(project=projectObject, user=userObject)
                 projectLiked.save()
         except:
-            return JsonResponse({"bool": False, "msg": "Kon like niet koppelen aan project", "likedCount": likedCount}, safe=True)
+            return JsonResponse({"bool": False, "msg": "Kon like niet koppelen aan project", "likedCount": likedCount})
 
-        return JsonResponse({"bool": True, "msg": "Like is toegevoegd", "likedCount": likedCount}, safe=True)
+        return JsonResponse({"bool": True, "msg": "Like is toegevoegd", "likedCount": likedCount})
     except:
-        print("exception")
-        return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te liken", "likedCount": likedCount},
-                            safe=True)
+        return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te liken", "likedCount": likedCount})
 
 @require_http_methods(['GET'])
 def getAllLikedProjectsById(request,id):
