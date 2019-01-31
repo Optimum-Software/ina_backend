@@ -23,6 +23,12 @@ def sendMsgToUser(request):
         try:
             deviceObject = Device.objects.filter(user=userObject).first()
             if deviceObject.canNotificate:
+                try:
+                    chatObject = Chat.objects.get(pk=data['chatId'])
+                    notObject = Notification(user=deviceObject.user, type=0, chat=chatObject, project=None)
+                    notObject.save()
+                except Exception as e:
+                    print(e)
                 apiKey = secretData['ONE_SIGNAL_APIKEY']
                 appId = secretData['ONE_SIGNAL_APIID']
                 header = {"Content-Type": "application/json; charset=utf-8",

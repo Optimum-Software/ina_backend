@@ -50,3 +50,15 @@ def getAllFollowedProjectsByUserId(request,id):
             return JsonResponse({"bool": False, "found": True, "msg": "Je volgt nog geen projecten"}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "found": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
+
+@require_http_methods(['POST'])
+def setCanNotificate(request):
+    data = json.loads(request.body.decode('utf8'))
+    try:
+        projectFollowedObject = Project_Followed.objects.get(user=User.objects.get(pk=data['userId']), project=Project.objects.get(pk=data['projectId']))
+        projectFollowedObject.canNotificate = data['canNotificate']
+        projectFollowedObject.save()
+        return JsonResponse({"bool": True, "msg": "Notificatie instellingen aangepast"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Kon notificatie niet instellen"})

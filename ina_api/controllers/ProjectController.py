@@ -527,3 +527,60 @@ def getProjectsByTag(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan"})
+
+@require_http_methods(['GET'])
+def getSwipeProjects(request, userId):
+    try:
+        userObject = User.objects.get(pk=userId)
+    except:
+        return JsonResponse({"bool": False, "msg": "Er is geen gebruiker met id [" + str(userId) + "]"})
+
+    try:
+        #First get all projects that the user did NOT create
+        allProjectList = Project.objects.exclude(creator=userObject)
+    
+        #Next filter the list on all projects for the which the user is an admin
+        projectAdminList = Project_Admin.objects.filter(user=userObject)
+    
+        filteredProjectList = allProjectList
+        for project in projectAdminList:
+            filteredProjectList = filteredProjectList.exclude(project_admin=project)
+    
+        #Next filter the list on all projects that the user has already liked
+        likeList = Project_Liked.objects.filter(user=userObject)
+    
+        secondFilterProjectList = filteredProjectList
+        for project in likeList:
+            secondFilterProjectList = secondFilterProjectList.exclude(project_liked=project)
+    
+        #TODO filter based on tags the user likes
+        #
+        #
+        #
+        #
+
+        
+        returnList = []
+        for entry in secondFilterProjectList:
+            imageList = []
+            fileList = []
+            try:
+              fileObjects = File.objects.filter(project=entry)
+              for file in fileObjects:
+                if 'image' in mimetypes.guess_type(str(file))[0]:
+                  imageList.append(str(file))
+                elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                  fileList.append(str(file))
+            except ObjectDoesNotExist:
+                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+            imageList.append(entry.thumbnail)
+    
+            object = entry.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            returnList.append(object)
+    
+        return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er is wat fout gegaan met het ophalen van projecten"})
