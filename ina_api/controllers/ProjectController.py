@@ -445,31 +445,47 @@ def editProject(request):
         # update tags if needed
         try:
             newTags = []
+            oldTagList = Project_Tag.objects.values_list('tag').filter(project=projectObject)
             oldTags = []
+
+            for oldTag in oldTagList:
+                tagObject = Tag.objects.get(pk=oldTag[0])
+                oldTags.append(tagObject.name)
+            print(oldTags)
+
             for fieldName in request.POST:
                 if "#" in fieldName:
                     newTags.append(request.POST.get(fieldName))
+            print(newTags)
             if len(newTags) > 0:
                 for tag in newTags:
-                    try:
+                    if tag in oldTags:
+                        oldTags.remove(tag)
+                        print("Tag is al toegevoegd aan het project")
+                        continue
+                    # kijk of tag al bestaat in Tag tabel
+                    elif Tag.objects.filter(name=tag).exists():
+
                         tagObject = Tag.objects.get(name=tag)
-                        if Project_Tag.objects.filter(tag=tagObject, project=projectObject).exists():
-                            continue
-                    except:
-                        None
-                    if Tag.objects.filter(name=tag).exists():
-                        tagObject = Tag.objects.filter(name=tag).first()
-                        projectTag = Project_Tag(tag=tagObject, project=projectObject)
-                        projectTag.save()
+                        if not Project_Tag.objects.filter(tag=tagObject, project=projectObject).exists():
+                            print("Project_Tag object - " + tagObject.name + " - bestaat nog niet, maar tag wel")
+                            projectTag = Project_Tag(tag=tagObject, project=projectObject)
+                            projectTag.save()
+                            oldTags.remove(tag)
+
+                # Als tag nog niet bestaat in tag tabel, maak de tag aan en voeg toe aan project
                     else:
+                        print("Tag - " + tag + " - wordt aangemaakt")
                         newTag = Tag(name=tag, thumbnail="")
                         newTag.save()
                         projectTag = Project_Tag(tag=newTag, project=projectObject)
                         projectTag.save()
-            # if len(oldTags) > 0:
-            #     for tag in oldTags:
-            #         tagObject = Tag.objects.filter(name=tag.name)
-            #         Project_Tag.objects.filter(tag=tagObject, project=projectObject).delete()
+
+            if len(oldTags) > 0:
+                for projectTag in oldTags:
+                    tagObject = Tag.objects.filter(name=projectTag).first()
+                    print("Deleting - " + tagObject.name + " from Project_Tag")
+                    Project_Tag.objects.filter(tag=tagObject, project=projectObject).delete()
         except Exception as e:
             print(e)
 
