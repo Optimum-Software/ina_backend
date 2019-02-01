@@ -241,10 +241,12 @@ def editOptionalInfo(request):
     except:
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
     try:
+        print(data)
         userObject.organisation = data['organisation']
         userObject.function = data['function']
         userObject.bio = data['bio']
         userObject.save()
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "Kon info niet instellen"}, safe=True)
     return JsonResponse({"bool": True, "msg": "Info voor gebruiker [" + str(data['userId']) + "] ingesteld"})

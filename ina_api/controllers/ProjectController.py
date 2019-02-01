@@ -16,7 +16,6 @@ import mimetypes
 def getProjectById(request, id):
     try:
         project = Project.objects.get(pk=id)
-        print("komt hier")
         imageList = []
         fileList = []
         try:
@@ -280,6 +279,13 @@ def createProject(request):
         uploadedFileUrl = ('/project/' + str(projectId) + '/thumbnail/' + thumbnailPath)
         project.thumbnail = uploadedFileUrl
         project.save()
+
+        try:
+            memberObject = Member(user=creator, project=project)
+            memberObject.save()
+        except Exception as e:
+            print(e)
+            return JsonResponse({"bool": False, "msg": "Er ging iets fout"})
 
         # save all documents of project
         if len(request.FILES) > 0:
