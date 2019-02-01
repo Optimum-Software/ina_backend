@@ -10,7 +10,6 @@ from django.core import serializers
 @require_http_methods(['POST'])
 def getMember(request):
     data = json.loads(request.body.decode('utf-8'))
-
     try:
         try:
             userObject = User.objects.get(pk=data['userId'])
@@ -20,7 +19,7 @@ def getMember(request):
             projectObject = Project.objects.get(pk=data['projectId'])
         except:
             return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['projectId']) + "] bestaat niet"}, safe=True)
-        memberObject = Member.objects.filter(user=userObject, project=projectObject).first()
+        memberObject = Member.objects.get(user=userObject, project=projectObject).first()
         userObject = memberObject.user.__repr__()
         projectObject = memberObject.project.__repr__()
         memberJson = serializers.serialize('json', [ memberObject, ])
