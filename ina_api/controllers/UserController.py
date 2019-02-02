@@ -44,6 +44,7 @@ def getUserByEmail(request):
         return JsonResponse({"bool": False, "msg": "Stuur alle velden mee aub"}, safe=True)
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getUserSettings(request, id):
     try:
         userObject = User.objects.get(pk=id)
@@ -58,6 +59,7 @@ def getUserSettings(request, id):
         return JsonResponse({"bool": False, "msg": "Er ging wat mis met het ophalen van deze instellingen"})
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def saveUserSettings(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -158,6 +160,7 @@ class CreateUserAPIView(CreateAPIView):
 
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def updateUser(request):
     try:
         userObject = User.objects.get(pk=request.POST.get('id'))
@@ -200,6 +203,7 @@ def updateUser(request):
 
 
 @require_http_methods(['DELETE'])
+@api_view(['DELETE'])
 def deleteUser(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -214,6 +218,7 @@ def deleteUser(request):
         return JsonResponse({"bool": False, "msg": "Kon gebruiker niet verwijderen"}, safe=True)
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def uploadFileForProfilePhoto(request):
     for fieldName in request.FILES:
         file = request.FILES[fieldName]
@@ -234,6 +239,7 @@ def uploadFileForProfilePhoto(request):
     return JsonResponse({"bool": True, "msg": "Profiel foto geupload"}, safe=True)
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def editOptionalInfo(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -241,10 +247,12 @@ def editOptionalInfo(request):
     except:
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
     try:
+        print(data)
         userObject.organisation = data['organisation']
         userObject.function = data['function']
         userObject.bio = data['bio']
         userObject.save()
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "Kon info niet instellen"}, safe=True)
     return JsonResponse({"bool": True, "msg": "Info voor gebruiker [" + str(data['userId']) + "] ingesteld"})

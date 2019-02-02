@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 
 @require_http_methods(["GET"])
@@ -20,6 +21,7 @@ def getDeviceById(request, id):
     return JsonResponse(response, safe=True)
 
 @require_http_methods(["POST"])
+@api_view(['POST'])
 def createDevice(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -29,8 +31,6 @@ def createDevice(request):
             return JsonResponse({"bool": False, "msg": "gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
         try:
             if not Device.objects.filter(user=userObject).exists():
-                print(userObject)
-                print(data['deviceId'])
                 deviceObject = Device(user=userObject, device_name=data['deviceId'])
                 deviceObject.save()
                 return JsonResponse({"bool": True, "msg": "Device aangemaakt", "id": deviceObject.pk}, safe=True)
@@ -45,6 +45,7 @@ def createDevice(request):
         return JsonResponse({"bool": False, "msg": "Stuur all verplichte velden mee aub"}, safe=True)
 
 @require_http_methods(["DELETE"])
+@api_view(['DELETE'])
 def deleteDeviceById(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
