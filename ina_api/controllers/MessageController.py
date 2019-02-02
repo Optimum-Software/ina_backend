@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 import requests
 import os.path
@@ -13,6 +14,7 @@ json_data = open(os.path.join(BASE,'config.json'))
 secretData = json.load(json_data)
 
 @require_http_methods(["POST"])
+@api_view(['POST'])
 def sendMsgToUser(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
