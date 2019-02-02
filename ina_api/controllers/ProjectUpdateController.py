@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 import requests
 import os.path
+from rest_framework.decorators import api_view
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 json_data = open(os.path.join(BASE,'config.json'))
@@ -21,6 +22,7 @@ def getUpdateById(request, id):
         return JsonResponse({"bool": False, "msg": "Update bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def addUpdate(request):
     try:
         data = json.loads(request.body.decode('utf-8'))

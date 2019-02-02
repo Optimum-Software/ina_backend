@@ -6,6 +6,7 @@ from django.core import serializers
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 
 
 @require_http_methods(['GET'])
@@ -23,6 +24,7 @@ def getProjectLikedById(request, id):
 
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def likeProjectById(request):
     data = json.loads(request.body.decode('utf8'))
     projectId = data['id']
@@ -44,6 +46,7 @@ def likeProjectById(request):
         return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te liken"})
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def checkIfProjectLiked(request, projectId, userId):
     try:
         if Project_Liked.objects.filter(project=Project.objects.get(pk=projectId), user=User.objects.get(pk=userId)).exists():
@@ -83,6 +86,7 @@ def getAllLikedProjectsById(request,id):
         return JsonResponse({"bool": False, "msg": "failed to get your likes"}, safe=True)
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getLikedProjectsByUserId(request, user_id):
     try:
         userObject = User.objects.get(pk=user_id)
@@ -94,6 +98,6 @@ def getLikedProjectsByUserId(request, user_id):
                 projectsLiked.append(projectObject)
             return JsonResponse({"bool": True, "found": True, "msg": "Gelikedte projecten gevonden", "projects": projectsLiked})
         else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je hebt geen projecten geliked"})
+            return JsonResponse({"bool": True, "found": True, "msg": "Je hebt geen projecten geliked", "projects": []})
     except:
         return JsonResponse({"bool": False, "msg": "Kon gelikedte projecten niet ophalen"})

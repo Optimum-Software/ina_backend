@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 
 
@@ -60,6 +61,7 @@ def getMembersByProjectId(request, project_id):
         return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getMembersByUserId(request, user_id):
     try:
         userObject = User.objects.get(pk=user_id)
@@ -71,7 +73,7 @@ def getMembersByUserId(request, user_id):
                 projectsMembered.append(projectObject)
             return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
         else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten"})
+            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten", "projects": []})
     except:
         return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
 

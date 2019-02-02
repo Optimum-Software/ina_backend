@@ -10,6 +10,7 @@ from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from moviepy.editor import *
 import mimetypes
+from rest_framework.decorators import api_view
 
 
 @require_http_methods(['GET'])
@@ -247,6 +248,7 @@ def getAllProjectsMostFollowsFirst(request):
 
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def createProject(request):
     try:
         start_date = request.POST.get('beginDate')
@@ -350,6 +352,7 @@ def createProject(request):
 
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def editProject(request):
     try:
         projectId = request.POST.get('projectId')
@@ -489,6 +492,7 @@ def editProject(request):
 
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def uploadThumbnailForProject(request):
     for fieldName in request.FILES:
         file = request.FILES[fieldName]
@@ -535,6 +539,7 @@ def getProjectsByTag(request):
         return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan"})
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getSwipeProjects(request, userId):
     try:
         userObject = User.objects.get(pk=userId)
