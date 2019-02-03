@@ -4,6 +4,7 @@ import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
+import urllib, mimetypes
 
 @require_http_methods(['GET'])
 def getNotificationByUser(request, id):
