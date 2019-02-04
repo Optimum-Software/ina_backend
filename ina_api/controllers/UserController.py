@@ -150,7 +150,7 @@ class CreateUserAPIView(CreateAPIView):
                 return JsonResponse({"bool": False, "msg": "Vul alle verplichte velden in aub"}, safe=True)
             try:
                 userObject = User(email=data['email'], password=data['password'], first_name=data['firstName'],
-                                  last_name=data['lastName'], mobile=data['mobile'])
+                                  last_name=data['lastName'], mobile=data['mobile'], profile_photo_path='/user/stock-user.png')
                 userObject.save()
                 return JsonResponse({"bool": True, "msg": "Gebruiker aangemaakt", "id": userObject.pk}, safe=True)
             except:
