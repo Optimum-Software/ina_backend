@@ -153,9 +153,11 @@ class CreateUserAPIView(CreateAPIView):
                                   last_name=data['lastName'], mobile=data['mobile'])
                 userObject.save()
                 return JsonResponse({"bool": True, "msg": "Gebruiker aangemaakt", "id": userObject.pk}, safe=True)
-            except:
+            except Exception as e:
+                print(e)
                 return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
         except IntegrityError as e:
+            print(e)
             return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
 
 
@@ -218,7 +220,6 @@ def deleteUser(request):
         return JsonResponse({"bool": False, "msg": "Kon gebruiker niet verwijderen"}, safe=True)
 
 @require_http_methods(['POST'])
-@api_view(['POST'])
 def uploadFileForProfilePhoto(request):
     for fieldName in request.FILES:
         file = request.FILES[fieldName]
@@ -239,7 +240,6 @@ def uploadFileForProfilePhoto(request):
     return JsonResponse({"bool": True, "msg": "Profiel foto geupload"}, safe=True)
 
 @require_http_methods(['POST'])
-@api_view(['POST'])
 def editOptionalInfo(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -247,7 +247,6 @@ def editOptionalInfo(request):
     except:
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
     try:
-        print(data)
         userObject.organisation = data['organisation']
         userObject.function = data['function']
         userObject.bio = data['bio']

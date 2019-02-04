@@ -22,7 +22,6 @@ def getProjectById(request, id):
         try:
             fileObjects = File.objects.filter(project=project)
             for file in fileObjects:
-                print(mimetypes.guess_type(str(file))[0])
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                     imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
