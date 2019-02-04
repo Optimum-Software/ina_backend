@@ -534,12 +534,40 @@ def searchForProjects(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
         resultList = Project.objects.filter(name__icontains=data['searchTerm']).all()
-        projects = []
-        for result in resultList:
-            projects.append(result.__repr__())
-        return JsonResponse({"bool": True, "msg": "Zoeken is gelukt", "projects": projects})
-    except Exception as e:
-        return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan tijdens het zoeken"})
+        projectList = []
+        for project in resultList:
+            imageList = []
+            fileList = []
+            try:
+              fileObjects = File.objects.filter(project=project)
+              for file in fileObjects:
+                if 'image' in mimetypes.guess_type(str(file))[0]:
+                  imageList.append(str(file))
+                elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                  fileList.append(str(file))
+            except ObjectDoesNotExist:
+              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+            imageList.append(project.thumbnail)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location,
+                'images' : imageList,
+                'files' : fileList,
+
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
+
 
 
 @require_http_methods(['POST'])
@@ -547,14 +575,40 @@ def getProjectsByTag(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
         tagObject = Tag.objects.get(name=data['tagName'])
-        projectList = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
-        returnList = []
-        for project in projectList:
-            returnList.append(Project.objects.get(pk=project).__repr__())
-        return JsonResponse({"bool": True, "msg": "Projecten gevonden", "projects": returnList})
-    except Exception as e:
-        print(e)
-        return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan"})
+        allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
+        projectList = []
+        for project in allProjects:
+            imageList = []
+            fileList = []
+            try:
+              fileObjects = File.objects.filter(project=project)
+              for file in fileObjects:
+                if 'image' in mimetypes.guess_type(str(file))[0]:
+                  imageList.append(str(file))
+                elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                  fileList.append(str(file))
+            except ObjectDoesNotExist:
+              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+            imageList.append(project.thumbnail)
+            projectList.append({
+                'id': project.id,
+                'name': project.name,
+                'thumbnail': project.thumbnail,
+                'creator': project.creator.__repr__(),
+                'desc': project.desc,
+                'start_date': project.start_date,
+                'end_date': project.end_date,
+                'created_at': project.created_at,
+                'like_count': project.like_count,
+                'follower_count': project.follower_count,
+                'location': project.location,
+                'images' : imageList,
+                'files' : fileList,
+
+            })
+        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
 
 @require_http_methods(['GET'])
