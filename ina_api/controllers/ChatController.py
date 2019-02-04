@@ -3,9 +3,11 @@ import json
 from django.core.exceptions import ObjectDoesNotExist
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def createChat(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -35,6 +37,7 @@ def createChat(request):
     return JsonResponse({"bool": True, "msg": "Chat aangemaakt", "chat": chatObject.__repr__()})
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getChatsForUser(request, id):
     try:
         userObject = User.objects.get(pk=id)

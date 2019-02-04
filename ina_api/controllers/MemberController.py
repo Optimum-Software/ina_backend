@@ -4,13 +4,13 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 
 
 @require_http_methods(['POST'])
 def getMember(request):
     data = json.loads(request.body.decode('utf-8'))
-
     try:
         try:
             userObject = User.objects.get(pk=data['userId'])
@@ -20,7 +20,7 @@ def getMember(request):
             projectObject = Project.objects.get(pk=data['projectId'])
         except:
             return JsonResponse({"bool": False, "msg": "Groep met id [" + str(data['projectId']) + "] bestaat niet"}, safe=True)
-        memberObject = Member.objects.filter(user=userObject, project=projectObject).first()
+        memberObject = Member.objects.get(user=userObject, project=projectObject).first()
         userObject = memberObject.user.__repr__()
         projectObject = memberObject.project.__repr__()
         memberJson = serializers.serialize('json', [ memberObject, ])
@@ -61,6 +61,7 @@ def getMembersByProjectId(request, project_id):
         return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getMembersByUserId(request, user_id):
     try:
         userObject = User.objects.get(pk=user_id)
@@ -72,7 +73,7 @@ def getMembersByUserId(request, user_id):
                 projectsMembered.append(projectObject)
             return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
         else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten"})
+            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten", "projects": []})
     except:
         return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
 

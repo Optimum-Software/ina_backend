@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 
@@ -16,6 +17,7 @@ def getFileById(request, id):
         return JsonResponse({"bool": False, "msg": "File bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])
+@api_view(['POST'])
 def uploadFileForProject(request):
 	for fieldName in request.FILES:
 		file = request.FILES[fieldName]

@@ -87,6 +87,7 @@ urlpatterns = [
     path('likeProjectById', ProjectLikedController.likeProjectById, name="likeProjectById"),
     path('getAllLikedProjectsById/<int:id>', ProjectLikedController.getAllLikedProjectsById, name="getAllLikedProjectsById"),
     path('getLikedProjectsByUserId/<int:user_id>', ProjectLikedController.getLikedProjectsByUserId, name="getLikedProjectsByUserId"),
+    path('checkIfProjectLiked/<int:userId>/<int:projectId>', ProjectLikedController.checkIfProjectLiked, name="checkIfProjectLiked"),
 
     # PROJECTTAG
     path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
@@ -105,14 +106,12 @@ urlpatterns = [
     # USER
     path('getUserById/<int:id>', UserController.getUserById, name="userById"),
     path('getUserByEmail', UserController.getUserByEmail, name="userByEmail"), #Fields: email
-    path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"),
+    path('createUser', UserController.CreateUserAPIView.as_view(), name="createUser"), # Fields: email, password, firstName, lastName, bio, mobile
     path('updateUser', UserController.updateUser, name="updateUser"),
     path('passwordForgotVerification', UserController.sendPasswordVerification, name="sendPasswordVerification"),
     path('changePassword', UserController.changePassword, name="changePassword"),
     path('getUserSettings/<int:id>', UserController.getUserSettings, name="getUserSettings"),
-    path('saveUserSettings', UserController.saveUserSettings, name="saveUserSettings"),
-    # Fields: email, password, firstName, lastName, bio, mobile, (optional => can be empty) organisation, (optional => can be empty) function
-
+    path('saveUserSettings', UserController.saveUserSettings, name="saveUserSettings"), 
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
     path('uploadFileForUser', UserController.uploadFileForProfilePhoto, name="uploadFileForProfilePhoto"),
     path('editOptionalInfo', UserController.editOptionalInfo, name="editOptionalInfo"),

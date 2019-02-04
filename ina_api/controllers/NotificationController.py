@@ -3,10 +3,12 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 from django.core import serializers
 import urllib, mimetypes
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def getNotificationByUser(request, id):
 	try:
 		userObject = User.objects.get(pk=id)
@@ -39,6 +41,7 @@ def getNotificationByUser(request, id):
 		return JsonResponse({"bool": False, "msg": "Er ging iets mis met meldingen ophalen"})
 
 @require_http_methods(['GET'])
+@api_view(['GET'])
 def markAsRead(request, id):
 	try:
 		notiObject = Notification.objects.get(pk=id)
