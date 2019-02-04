@@ -42,8 +42,8 @@ def getProjectById(request, id):
             'like_count': project.like_count,
             'follower_count': project.follower_count,
             'location': project.location,
-            'images' : imageList,
-            'files' : fileList,
+            'images': imageList,
+            'files': fileList,
         }
 
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
@@ -60,12 +60,12 @@ def getAllProjects(request):
             imageList = []
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=project)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -81,8 +81,8 @@ def getAllProjects(request):
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
                 'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
+                'images': imageList,
+                'files': fileList,
 
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
@@ -99,14 +99,14 @@ def getAllProjectsNewestFirst(request):
             imageList = []
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=project)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
             projectList.append({
                 'id': project.id,
@@ -120,8 +120,8 @@ def getAllProjectsNewestFirst(request):
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
                 'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
+                'images': imageList,
+                'files': fileList,
 
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
@@ -138,14 +138,14 @@ def getAllProjectsOldestFirst(request):
             imageList = []
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=project)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
             projectList.append({
                 'id': project.id,
@@ -159,8 +159,8 @@ def getAllProjectsOldestFirst(request):
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
                 'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
+                'images': imageList,
+                'files': fileList,
 
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
@@ -178,15 +178,15 @@ def getAllProjectsMostLikedFirst(request):
             imageList.append(project.thumbnail)
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=project)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-            
+                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
             projectList.append({
                 'id': project.id,
                 'name': project.name,
@@ -199,8 +199,8 @@ def getAllProjectsMostLikedFirst(request):
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
                 'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
+                'images': imageList,
+                'files': fileList,
 
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
@@ -217,14 +217,14 @@ def getAllProjectsMostFollowsFirst(request):
             imageList = []
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=project)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
             projectList.append({
                 'id': project.id,
@@ -238,8 +238,8 @@ def getAllProjectsMostFollowsFirst(request):
                 'like_count': project.like_count,
                 'follower_count': project.follower_count,
                 'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
+                'images': imageList,
+                'files': fileList,
 
             })
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
@@ -259,7 +259,7 @@ def createProject(request):
         if end_date == "":
             end_date = None
 
-        creatorId= request.POST.get('creatorId')
+        creatorId = request.POST.get('creatorId')
         creator = User.objects.get(pk=creatorId)
         project = Project(
             name=request.POST.get('name'),
@@ -307,18 +307,21 @@ def createProject(request):
                     newFile.save()
 
                     if 'video' in mimetypes.guess_type(str(file))[0]:
-                      clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
-                      clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg', t=0.00)
-                      uploadedThumbnailUrl = ('/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20", "") + '.jpg')
-                      newThumbnail = File(project=project, path=uploadedThumbnailUrl)
+                        clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
+                        clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg',
+                                        t=0.00)
+                        uploadedThumbnailUrl = (
+                                    '/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20",
+                                                                                                          "") + '.jpg')
+                        newThumbnail = File(project=project, path=uploadedThumbnailUrl)
 
-                      newThumbnail.save()
+                        newThumbnail.save()
 
-                      uploadedFileUrl = ('/project/' + str(projectId) + '/' + filename.replace("%20", ""))
+                        uploadedFileUrl = ('/project/' + str(projectId) + '/' + filename.replace("%20", ""))
 
-                      newFile = File(project=project, path=uploadedFileUrl)
+                        newFile = File(project=project, path=uploadedFileUrl)
 
-                      newFile.save()
+                        newFile.save()
 
                 except Exception as e:
                     print(e)
@@ -348,7 +351,6 @@ def createProject(request):
         return JsonResponse({"bool": True, "msg": "Project aangemaakt", "id": project.pk}, safe=True)
     except Exception as e:
         return JsonResponse({"bool": False, "msg": "Kon project niet aanmaken"}, safe=True)
-
 
 
 @require_http_methods(['POST'])
@@ -382,7 +384,6 @@ def editProject(request):
             projectObject.end_date = end_date
         projectObject.save()
         print("first fields succesfully updated")
-
 
         # update thumbnail if needed
         try:
@@ -433,8 +434,10 @@ def editProject(request):
                 print("3")
                 if 'video' in mimetypes.guess_type(str(file))[0]:
                     clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
-                    clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg', t=0.00)
-                    uploadedThumbnailUrl = ('/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20", "") + '.jpg')
+                    clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg',
+                                    t=0.00)
+                    uploadedThumbnailUrl = ('/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20",
+                                                                                                                  "") + '.jpg')
                     newThumbnail = File(project=projectObject, path=uploadedThumbnailUrl)
 
                     newThumbnail.save()
@@ -482,7 +485,7 @@ def editProject(request):
                             projectTag.save()
                             oldTags.remove(tag)
 
-                # Als tag nog niet bestaat in tag tabel, maak de tag aan en voeg toe aan project
+                    # Als tag nog niet bestaat in tag tabel, maak de tag aan en voeg toe aan project
                     else:
                         print("Tag - " + tag + " - wordt aangemaakt")
                         newTag = Tag(name=tag, thumbnail="")
@@ -502,9 +505,6 @@ def editProject(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon project niet aanpassen"}, safe=True)
-
-
-
 
 
 @require_http_methods(['POST'])
@@ -528,6 +528,7 @@ def uploadThumbnailForProject(request):
             return JsonResponse({"bool": False, "msg": "Kon foto niet opslaan", "file": filename}, safe=True)
     return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
 
+
 @require_http_methods(['POST'])
 def searchForProjects(request):
     data = json.loads(request.body.decode('utf-8'))
@@ -539,6 +540,7 @@ def searchForProjects(request):
         return JsonResponse({"bool": True, "msg": "Zoeken is gelukt", "projects": projects})
     except Exception as e:
         return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan tijdens het zoeken"})
+
 
 @require_http_methods(['POST'])
 def getProjectsByTag(request):
@@ -554,6 +556,7 @@ def getProjectsByTag(request):
         print(e)
         return JsonResponse({"bool": False, "msg": "Er is iets mis gegaan"})
 
+
 @require_http_methods(['GET'])
 @api_view(['GET'])
 def getSwipeProjects(request, userId):
@@ -565,48 +568,48 @@ def getSwipeProjects(request, userId):
     try:
         #First get all projects that the user did NOT create
         allProjectList = Project.objects.exclude(creator=userObject)
-    
+
         #Next filter the list on all projects for the which the user is an admin
         projectAdminList = Project_Admin.objects.filter(user=userObject)
-    
+
         filteredProjectList = allProjectList
         for project in projectAdminList:
             filteredProjectList = filteredProjectList.exclude(project_admin=project)
-    
+
         #Next filter the list on all projects that the user has already liked
         likeList = Project_Liked.objects.filter(user=userObject)
-    
+
         secondFilterProjectList = filteredProjectList
         for project in likeList:
             secondFilterProjectList = secondFilterProjectList.exclude(project_liked=project)
-    
+
         #TODO filter based on tags the user likes
         #
         #
         #
         #
 
-        
+
         returnList = []
         for entry in secondFilterProjectList:
             imageList = []
             fileList = []
             try:
-              fileObjects = File.objects.filter(project=entry)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                fileObjects = File.objects.filter(project=entry)
+                for file in fileObjects:
+                    if 'image' in mimetypes.guess_type(str(file))[0]:
+                        imageList.append(str(file))
+                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                        fileList.append(str(file))
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(entry.thumbnail)
-    
+
             object = entry.__repr__()
             object['images'] = imageList
             object['files'] = imageList
             returnList.append(object)
-    
+
         return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
     except Exception as e:
         print(e)
