@@ -5,7 +5,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.core import serializers
-import mimetypes
+import urllib, mimetypes
 
 @require_http_methods(['GET'])
 @api_view(['GET'])
