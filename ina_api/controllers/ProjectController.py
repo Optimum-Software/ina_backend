@@ -22,7 +22,6 @@ def getProjectById(request, id):
         try:
             fileObjects = File.objects.filter(project=project)
             for file in fileObjects:
-                print(mimetypes.guess_type(str(file))[0])
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                     imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
@@ -30,22 +29,10 @@ def getProjectById(request, id):
         except ObjectDoesNotExist:
             print("OEPS")
         imageList.append(project.thumbnail)
-        project = {
-            'id': project.id,
-            'name': project.name,
-            'thumbnail': project.thumbnail,
-            'creator': project.creator.__repr__(),
-            'desc': project.desc,
-            'start_date': project.start_date,
-            'end_date': project.end_date,
-            'created_at': project.created_at,
-            'like_count': project.like_count,
-            'follower_count': project.follower_count,
-            'location': project.location,
-            'images': imageList,
-            'files': fileList,
-        }
-
+        object = project.__repr__()
+        object['images'] = imageList
+        object['files'] = imageList
+        projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
@@ -69,22 +56,10 @@ def getAllProjects(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images': imageList,
-                'files': fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -108,22 +83,10 @@ def getAllProjectsNewestFirst(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images': imageList,
-                'files': fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -147,22 +110,10 @@ def getAllProjectsOldestFirst(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images': imageList,
-                'files': fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -187,22 +138,10 @@ def getAllProjectsMostLikedFirst(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
 
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images': imageList,
-                'files': fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -226,22 +165,10 @@ def getAllProjectsMostFollowsFirst(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images': imageList,
-                'files': fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -383,17 +310,12 @@ def editProject(request):
         if projectObject.end_date != end_date:
             projectObject.end_date = end_date
         projectObject.save()
-        print("first fields succesfully updated")
 
         # update thumbnail if needed
         try:
-            print(request.FILES)
             thumbnail = request.FILES["thumbnail"]
             fs = FileSystemStorage('./media/project/' + str(projectId) + "/thumbnail")
-            print(thumbnail)
-            print(thumbnail.name)
             filesInThumbnailDir = fs.listdir('./')[1]
-            print(filesInThumbnailDir)
             if thumbnail.name not in filesInThumbnailDir:
                 fs.delete(filesInThumbnailDir[0])
                 thumbnailPath = fs.save(thumbnail.name, thumbnail)
@@ -407,8 +329,6 @@ def editProject(request):
             print("thumbnail error")
             print(e)
 
-        print("thumbnail succesfully updated")
-
         # update other files if needed
         if len(request.FILES) > 0:
             fs = FileSystemStorage('./media/project/' + str(projectId))
@@ -418,20 +338,15 @@ def editProject(request):
 
             for fieldName in request.FILES:
                 file = request.FILES[fieldName]
-                print(file)
                 if fieldName == "thumbnail":
                     continue
-                print(file.name)
                 if file.name in allFilesInDir:
                     allFilesInDir.remove(file.name)
                     continue
-                print("1")
                 savedFile = fs.save(file.name, file)
                 uploadedFileUrl = ('/project/' + str(projectId) + '/' + savedFile.replace("%20", ""))
-                print("2")
                 newFile = File(project=projectObject, path=uploadedFileUrl)
                 newFile.save()
-                print("3")
                 if 'video' in mimetypes.guess_type(str(file))[0]:
                     clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
                     clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg',
@@ -452,7 +367,6 @@ def editProject(request):
                     File.objects.get(project=projectObject, path='/project/' + str(projectId) + '/' + file).delete()
                     fs.delete(file)
                     allFilesInDir.remove(file)
-        print("other files succesfully updated")
 
         # update tags if needed
         try:
@@ -463,12 +377,10 @@ def editProject(request):
             for oldTag in oldTagList:
                 tagObject = Tag.objects.get(pk=oldTag[0])
                 oldTags.append(tagObject.name)
-            print(oldTags)
 
             for fieldName in request.POST:
                 if "#" in fieldName:
                     newTags.append(request.POST.get(fieldName))
-            print(newTags)
             if len(newTags) > 0:
                 for tag in newTags:
                     if tag in oldTags:
@@ -487,7 +399,6 @@ def editProject(request):
 
                     # Als tag nog niet bestaat in tag tabel, maak de tag aan en voeg toe aan project
                     else:
-                        print("Tag - " + tag + " - wordt aangemaakt")
                         newTag = Tag(name=tag, thumbnail="")
                         newTag.save()
                         projectTag = Project_Tag(tag=newTag, project=projectObject)
@@ -496,7 +407,6 @@ def editProject(request):
             if len(oldTags) > 0:
                 for projectTag in oldTags:
                     tagObject = Tag.objects.filter(name=projectTag).first()
-                    print("Deleting - " + tagObject.name + " from Project_Tag")
                     Project_Tag.objects.filter(tag=tagObject, project=projectObject).delete()
         except Exception as e:
             print(e)
@@ -548,22 +458,10 @@ def searchForProjects(request):
             except ObjectDoesNotExist:
               return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -577,7 +475,8 @@ def getProjectsByTag(request):
         tagObject = Tag.objects.get(name=data['tagName'])
         allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
         projectList = []
-        for project in allProjects:
+        for index in allProjects:
+            project = Project.objects.get(pk=allProjects[index-1])
             imageList = []
             fileList = []
             try:
@@ -590,22 +489,10 @@ def getProjectsByTag(request):
             except ObjectDoesNotExist:
               return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
-            projectList.append({
-                'id': project.id,
-                'name': project.name,
-                'thumbnail': project.thumbnail,
-                'creator': project.creator.__repr__(),
-                'desc': project.desc,
-                'start_date': project.start_date,
-                'end_date': project.end_date,
-                'created_at': project.created_at,
-                'like_count': project.like_count,
-                'follower_count': project.follower_count,
-                'location': project.location,
-                'images' : imageList,
-                'files' : fileList,
-
-            })
+            object = project.__repr__()
+            object['images'] = imageList
+            object['files'] = imageList
+            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
