@@ -18,6 +18,7 @@ from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
 from django.utils.crypto import get_random_string
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User as AuthUser
 
 
 @require_http_methods(['GET'])
@@ -38,8 +39,12 @@ def getUserByEmail(request):
         try:
             userObject = User.objects.get(email=data['email']).__repr__()
             return JsonResponse({"bool": True, "msg": "Gebruiker bestaat", "user": userObject}, safe=True)
-        except ObjectDoesNotExist:
-            return JsonResponse({"bool": False, "msg": "Gebruiker bestaat niet"}, safe=True)
+        except Exception as e:
+            try:
+                authUserObject = AuthUser.objects.get(username=data['email']).__repr__()
+                return JsonResponse({"bool": True, "msg": "Gebruiker bestaat alleen in auth", "user": authUserObject}, safe=True)
+            except:
+                return JsonResponse({"bool": False, "msg": "Gebruiker bestaat niet"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle velden mee aub"}, safe=True)
 

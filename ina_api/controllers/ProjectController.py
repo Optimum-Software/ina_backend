@@ -29,10 +29,21 @@ def getProjectById(request, id):
         except ObjectDoesNotExist:
             print("OEPS")
         imageList.append(project.thumbnail)
-        object = project.__repr__()
-        object['images'] = imageList
-        object['files'] = imageList
-        projectList.append(object)
+        project = {
+            'id': project.id,
+            'name': project.name,
+            'thumbnail': project.thumbnail,
+            'creator': project.creator.__repr__(),
+            'desc': project.desc,
+            'start_date': project.start_date,
+            'end_date': project.end_date,
+            'created_at': project.created_at,
+            'like_count': project.like_count,
+            'follower_count': project.follower_count,
+            'location': project.location,
+            'images': imageList,
+            'files': fileList,
+        }
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
@@ -475,8 +486,8 @@ def getProjectsByTag(request):
         tagObject = Tag.objects.get(name=data['tagName'])
         allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
         projectList = []
-        for index in allProjects:
-            project = Project.objects.get(pk=allProjects[index-1])
+        for id in allProjects:
+            project = Project.objects.get(pk=id)
             imageList = []
             fileList = []
             try:
@@ -494,7 +505,8 @@ def getProjectsByTag(request):
             object['files'] = imageList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
 
