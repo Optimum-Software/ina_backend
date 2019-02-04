@@ -45,6 +45,30 @@ def likeProjectById(request):
         print(e)
         return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te liken"})
 
+
+@require_http_methods(['POST'])
+@api_view(['POST'])
+def unlikeProjectById(request):
+    data = json.loads(request.body.decode('utf8'))
+    projectId = data['id']
+    userId = data['userId']
+    try:
+        projectObject = Project.objects.get(pk=projectId)
+        userObject = User.objects.get(pk=userId)
+        if Project_Liked.objects.filter(project=projectObject).exists():
+            Project_Liked.objects.get(project=projectObject, user=userObject).delete()
+            projectObject.like_count -= 1
+            projectObject.save()
+            likedCount = projectObject.like_count
+            return JsonResponse({"bool": True, "msg": "Project succesvol geunliked", "likedCount": likedCount})
+        else:
+            return JsonResponse({"bool": True, "msg": "Je hebt het project nog niet geliked"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te unliken"})
+
+
+
 @require_http_methods(['GET'])
 @api_view(['GET'])
 def checkIfProjectLiked(request, projectId, userId):
