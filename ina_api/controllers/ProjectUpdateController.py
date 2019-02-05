@@ -81,7 +81,8 @@ def addUpdate(request):
         payload = {"app_id": appId,
            "include_player_ids": deviceList,
            "contents": {"en": "Er is een update voor project: " + projectObject.name},
-           "headings": {"en": "ina"}}
+           "headings": {"en": "ina"},
+           "data": {"type": 1}}
         req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
 
         return JsonResponse({"bool": True, "msg": "update aangemaakt", "projectUpdate": updateObject.pk})
