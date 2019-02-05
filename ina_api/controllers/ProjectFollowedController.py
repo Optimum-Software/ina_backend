@@ -7,6 +7,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.core import serializers
+import mimetypes
 
 @require_http_methods(['GET'])
 def getProjectFollowedById(request, id):
@@ -49,13 +50,39 @@ def getAllFollowedProjectsByUserId(request,id):
         projectList = []
         if (projectsFollowed):
             for entry in projectsFollowed:
-                projectObject = entry.project.__repr__()
-                projectList.append(projectObject)
+                imageList = []
+                fileList = []
+                try:
+                    fileObjects = File.objects.filter(project=entry.project)
+                    for file in fileObjects:
+                        if 'image' in mimetypes.guess_type(str(file))[0]:
+                            imageList.append(str(file))
+                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                            fileList.append(str(file))
+                except ObjectDoesNotExist:
+                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                imageList.append(entry.project.thumbnail)
+                object = entry.project.__repr__()
+                object['images'] = imageList
+                object['files'] = imageList
+                projectList.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Projecten die je volgt.", "projects": projectList}, safe=True)
         else:
             return JsonResponse({"bool": True, "found": True, "msg": "Je volgt nog geen projecten", "projects": []}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "found": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
+
+@require_http_methods(['GET'])
+@api_view(['GET'])
+def checkIfFollowed(request, userId, projectId):
+    try:
+        try:
+            object = Project_Followed.objects.get(user=User.objects.get(pk=userId), project=Project.objects.get(pk=projectId))
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker volgt dit project wel", "followed": True, "canNotificate": object.canNotificate})
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker volgt dit project niet", "followed": False})
+    except:
+        return JsonResponse({"bool": False, "msg": "Er is iets misgegaan"})
 
 @require_http_methods(['POST'])
 @api_view(['POST'])

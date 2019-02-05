@@ -18,6 +18,7 @@ from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
 from django.utils.crypto import get_random_string
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User as AuthUser
 
 
 @require_http_methods(['GET'])
@@ -38,8 +39,12 @@ def getUserByEmail(request):
         try:
             userObject = User.objects.get(email=data['email']).__repr__()
             return JsonResponse({"bool": True, "msg": "Gebruiker bestaat", "user": userObject}, safe=True)
-        except ObjectDoesNotExist:
-            return JsonResponse({"bool": False, "msg": "Gebruiker bestaat niet"}, safe=True)
+        except Exception as e:
+            try:
+                authUserObject = AuthUser.objects.get(username=data['email']).__repr__()
+                return JsonResponse({"bool": True, "msg": "Gebruiker bestaat alleen in auth", "user": authUserObject}, safe=True)
+            except:
+                return JsonResponse({"bool": False, "msg": "Gebruiker bestaat niet"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Stuur alle velden mee aub"}, safe=True)
 
@@ -55,7 +60,8 @@ def getUserSettings(request, id):
             'canNotificate': canNotificate
         }
         return JsonResponse({"bool": True, "msg": "Instellingen opgehaald", "settings": settingsData})
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "Er ging wat mis met het ophalen van deze instellingen"})
 
 @require_http_methods(['POST'])
@@ -153,9 +159,11 @@ class CreateUserAPIView(CreateAPIView):
                                   last_name=data['lastName'], mobile=data['mobile'], profile_photo_path='/user/stock-user.png')
                 userObject.save()
                 return JsonResponse({"bool": True, "msg": "Gebruiker aangemaakt", "id": userObject.pk}, safe=True)
-            except:
+            except Exception as e:
+                print(e)
                 return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
         except IntegrityError as e:
+            print(e)
             return JsonResponse({"bool": False, "msg": "Kon gebruiker niet aanmaken"}, safe=True)
 
 
@@ -218,7 +226,6 @@ def deleteUser(request):
         return JsonResponse({"bool": False, "msg": "Kon gebruiker niet verwijderen"}, safe=True)
 
 @require_http_methods(['POST'])
-@api_view(['POST'])
 def uploadFileForProfilePhoto(request):
     for fieldName in request.FILES:
         file = request.FILES[fieldName]
@@ -239,7 +246,6 @@ def uploadFileForProfilePhoto(request):
     return JsonResponse({"bool": True, "msg": "Profiel foto geupload"}, safe=True)
 
 @require_http_methods(['POST'])
-@api_view(['POST'])
 def editOptionalInfo(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
@@ -247,7 +253,6 @@ def editOptionalInfo(request):
     except:
         return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
     try:
-        print(data)
         userObject.organisation = data['organisation']
         userObject.function = data['function']
         userObject.bio = data['bio']

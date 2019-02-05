@@ -66,6 +66,7 @@ def getProjectByIdNotLoggedIn(request, projectId):
         imageList = []
         fileList = []
 
+
         try:
             fileObjects = File.objects.filter(project=projectObject)
             for file in fileObjects:
@@ -87,6 +88,7 @@ def getProjectByIdNotLoggedIn(request, projectId):
         project['member'] = False
 
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
+
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
 
@@ -382,17 +384,12 @@ def editProject(request):
         if projectObject.end_date != end_date:
             projectObject.end_date = end_date
         projectObject.save()
-        print("first fields succesfully updated")
 
         # update thumbnail if needed
         try:
-            print(request.FILES)
             thumbnail = request.FILES["thumbnail"]
             fs = FileSystemStorage('./media/project/' + str(projectId) + "/thumbnail")
-            print(thumbnail)
-            print(thumbnail.name)
             filesInThumbnailDir = fs.listdir('./')[1]
-            print(filesInThumbnailDir)
             if thumbnail.name not in filesInThumbnailDir:
                 fs.delete(filesInThumbnailDir[0])
                 thumbnailPath = fs.save(thumbnail.name, thumbnail)
@@ -406,8 +403,6 @@ def editProject(request):
             print("thumbnail error")
             print(e)
 
-        print("thumbnail succesfully updated")
-
         # update other files if needed
         if len(request.FILES) > 0:
             fs = FileSystemStorage('./media/project/' + str(projectId))
@@ -417,20 +412,15 @@ def editProject(request):
 
             for fieldName in request.FILES:
                 file = request.FILES[fieldName]
-                print(file)
                 if fieldName == "thumbnail":
                     continue
-                print(file.name)
                 if file.name in allFilesInDir:
                     allFilesInDir.remove(file.name)
                     continue
-                print("1")
                 savedFile = fs.save(file.name, file)
                 uploadedFileUrl = ('/project/' + str(projectId) + '/' + savedFile.replace("%20", ""))
-                print("2")
                 newFile = File(project=projectObject, path=uploadedFileUrl)
                 newFile.save()
-                print("3")
                 if 'video' in mimetypes.guess_type(str(file))[0]:
                     clip = VideoFileClip('./media/project/' + str(projectId) + '/' + file.name)
                     clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg',
@@ -451,7 +441,6 @@ def editProject(request):
                     File.objects.get(project=projectObject, path='/project/' + str(projectId) + '/' + file).delete()
                     fs.delete(file)
                     allFilesInDir.remove(file)
-        print("other files succesfully updated")
 
         # update tags if needed
         try:
@@ -462,12 +451,10 @@ def editProject(request):
             for oldTag in oldTagList:
                 tagObject = Tag.objects.get(pk=oldTag[0])
                 oldTags.append(tagObject.name)
-            print(oldTags)
 
             for fieldName in request.POST:
                 if "#" in fieldName:
                     newTags.append(request.POST.get(fieldName))
-            print(newTags)
             if len(newTags) > 0:
                 for tag in newTags:
                     if tag in oldTags:
@@ -479,14 +466,12 @@ def editProject(request):
 
                         tagObject = Tag.objects.get(name=tag)
                         if not Project_Tag.objects.filter(tag=tagObject, project=projectObject).exists():
-                            print("Project_Tag object - " + tagObject.name + " - bestaat nog niet, maar tag wel")
                             projectTag = Project_Tag(tag=tagObject, project=projectObject)
                             projectTag.save()
                             oldTags.remove(tag)
 
                     # Als tag nog niet bestaat in tag tabel, maak de tag aan en voeg toe aan project
                     else:
-                        print("Tag - " + tag + " - wordt aangemaakt")
                         newTag = Tag(name=tag, thumbnail="")
                         newTag.save()
                         projectTag = Project_Tag(tag=newTag, project=projectObject)
@@ -495,7 +480,6 @@ def editProject(request):
             if len(oldTags) > 0:
                 for projectTag in oldTags:
                     tagObject = Tag.objects.filter(name=projectTag).first()
-                    print("Deleting - " + tagObject.name + " from Project_Tag")
                     Project_Tag.objects.filter(tag=tagObject, project=projectObject).delete()
         except Exception as e:
             print(e)
@@ -526,6 +510,7 @@ def uploadThumbnailForProject(request):
         except:
             return JsonResponse({"bool": False, "msg": "Kon foto niet opslaan", "file": filename}, safe=True)
     return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
+
 
 @require_http_methods(['GET'])
 @api_view(['GET'])
@@ -572,14 +557,12 @@ def getSwipeProjects(request, userId):
                         fileList.append(file.__repr__())
 
                 if Project_Liked.objects.filter(project=project, user=userId).exists():
-                    print("liked true")
                     likedBool = True
                 if Project_Followed.objects.filter(project=project, user=userId).exists():
-                    print("followed true")
                     followedBool = True
                 if Member.objects.filter(project=project, user=userId).exists():
-                    print("member true")
                     memberBool = True
+
 
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})

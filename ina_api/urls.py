@@ -4,8 +4,10 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController,  \
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, \
     MessageController, ChatController, ProjectUpdateController, NotificationController
+
+
 urlpatterns = [
     # Authentication tutorial
     path('login',LoginController.LoginUser.as_view(),name='auth_user_login'),
@@ -74,9 +76,9 @@ urlpatterns = [
     path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
     path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
-    path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"),
-    path('checkIfProjectFollowed/<int:userId>/<int:projectId>', ProjectFollowedController.checkIfProjectFollowed, name="checkIfProjectFollowed"),
     path('unfollowProjectById', ProjectFollowedController.unfollowProjectById, name="unfollowProjectById"),
+    path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"), #fields: canNotificate, userId, projectId
+    path('checkIfFollowed/<int:userId>/<int:projectId>', ProjectFollowedController.checkIfFollowed, name="checkIfFollowed"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
