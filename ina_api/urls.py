@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .controllers import LoginController, DeviceController, FileController, GroupAdminController, \
     ProjectAdminController, \
     ProjectController, ProjectFavoriteController, ProjectFollowedController, ProjectLikedController, \
-    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController,  \
+    ProjectTagController, UserController, UserTagController, TagController, GroupController, MemberController, \
     MessageController, ChatController, ProjectUpdateController, NotificationController
 
 
@@ -47,6 +47,7 @@ urlpatterns = [
     path('createMember', MemberController.createMember, name='createMember'),
     path('getMembersByProjectId/<int:project_id>', MemberController.getMembersByProjectId, name='getMembersByProjectId'),
     path('getMembersByUserId/<int:user_id>', MemberController.getMembersByUserId, name='getMembersByUserId'),
+    path('checkIfProjectMember/<int:userId>/<int:projectId>', MemberController.checkIfProjectMember, name='checkIfProjectMember'),
 
     #MESSAGE
     path('sendMessageToUserById', MessageController.sendMsgToUser, name="sendMessage"), #fields: userId, chatId
@@ -56,22 +57,17 @@ urlpatterns = [
     path("markAsRead/<int:id>", NotificationController.markAsRead, name="markAsRead"),
 
     # PROJECT
-    path('getProjectById/<int:id>', ProjectController.getProjectById, name="projectById"),
-    path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
+    path('getProjectById/<int:userId>/<int:projectId>', ProjectController.getProjectById, name="projectById"),
+    path('getProjectByIdNotLoggedIn/<int:projectId>', ProjectController.getProjectByIdNotLoggedIn, name="getProjectByIdNotLoggedIn"),
+    path('getProjects', ProjectController.getProjects, name="getProjects"),
+    path('getProjectsNotLoggedIn', ProjectController.getProjectsNotLoggedIn, name="getProjectsNotLoggedIn"),
     path('uploadThumbnailForProject', ProjectController.uploadThumbnailForProject, name="uploadThumbnailForProject"),
-    path('getAllProjectsNewestFirst', ProjectController.getAllProjectsNewestFirst, name="getAllProjectsNewestFirst"),
-    path('getAllProjectsOldestFirst', ProjectController.getAllProjectsOldestFirst, name="getAllProjectsOldestFirst"),
-    path('getAllProjectsMostLikedFirst', ProjectController.getAllProjectsMostLikedFirst, name="getAllProjectsMostLikedFirst"),
-    path('getAllProjectsMostFollowsFirst', ProjectController.getAllProjectsMostFollowsFirst, name="getAllProjectsMostFollowsFirst"),
-    path('searchForProjects', ProjectController.searchForProjects, name="searchForProjects"),
     path('createProject', ProjectController.createProject, name="createProject"),
-    path('getProjectsByTag', ProjectController.getProjectsByTag, name="getProjectsByTag"),
     path('getSwipeProjects/<int:userId>', ProjectController.getSwipeProjects, name="getSwipeProjects"),
     path('editProject', ProjectController.editProject, name="editProject"),
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
-    path('getAllProjects', ProjectController.getAllProjects, name="getAllProjects"),
 
     # PROJECTFAVORITE
     path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
@@ -80,6 +76,7 @@ urlpatterns = [
     path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
     path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
+    path('unfollowProjectById', ProjectFollowedController.unfollowProjectById, name="unfollowProjectById"),
     path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"), #fields: canNotificate, userId, projectId
     path('checkIfFollowed/<int:userId>/<int:projectId>', ProjectFollowedController.checkIfFollowed, name="checkIfFollowed"),
 
@@ -113,7 +110,7 @@ urlpatterns = [
     path('passwordForgotVerification', UserController.sendPasswordVerification, name="sendPasswordVerification"),
     path('changePassword', UserController.changePassword, name="changePassword"),
     path('getUserSettings/<int:id>', UserController.getUserSettings, name="getUserSettings"),
-    path('saveUserSettings', UserController.saveUserSettings, name="saveUserSettings"), 
+    path('saveUserSettings', UserController.saveUserSettings, name="saveUserSettings"),
     path('deleteUser', UserController.deleteUser, name="deleteUser"),  # Fields: id
     path('uploadFileForUser', UserController.uploadFileForProfilePhoto, name="uploadFileForProfilePhoto"),
     path('editOptionalInfo', UserController.editOptionalInfo, name="editOptionalInfo"),
@@ -121,3 +118,5 @@ urlpatterns = [
     # USERTAG
     path('getUserTagById/<int:id>', UserTagController.getUserTagById, name="userTagById"),
 ]
+
+
