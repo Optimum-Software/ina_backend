@@ -11,9 +11,10 @@ from django.core.files.storage import FileSystemStorage
 @require_http_methods(['GET'])
 def getFileById(request, id):
     try:
-        fileObject = File.objects.get(pk=id).__repr__()
-        return JsonResponse({"bool": True, "msg": "File bestaat", "file": fileObject}, safe=True)
-    except ObjectDoesNotExist:
+        fileObject = File.objects.get(pk=id).__repr__().get('path')
+        return JsonResponse({"bool": True, "msg": "File bestaat", "name": fileName, "path": filePath}, safe=True)
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "File bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])

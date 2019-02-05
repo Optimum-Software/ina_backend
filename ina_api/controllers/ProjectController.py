@@ -475,8 +475,8 @@ def getProjectsByTag(request):
         tagObject = Tag.objects.get(name=data['tagName'])
         allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
         projectList = []
-        for index in allProjects:
-            project = Project.objects.get(pk=allProjects[index-1])
+        for id in allProjects:
+            project = Project.objects.get(pk=id)
             imageList = []
             fileList = []
             try:
@@ -486,7 +486,7 @@ def getProjectsByTag(request):
                   imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
                   fileList.append(str(file))
-            except ObjectDoesNotExist:
+            except Exception as e:
               return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
             object = project.__repr__()
@@ -494,7 +494,7 @@ def getProjectsByTag(request):
             object['files'] = imageList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
+    except Exception as e:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
 

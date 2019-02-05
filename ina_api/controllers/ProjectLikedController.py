@@ -7,6 +7,7 @@ import json
 from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
+import mimetypes
 
 
 @require_http_methods(['GET'])
@@ -118,8 +119,23 @@ def getLikedProjectsByUserId(request, user_id):
         projectsLiked= []
         if (likedList):
             for entry in likedList:
-                projectObject = entry.project.__repr__()
-                projectsLiked.append(projectObject)
+                imageList = []
+                fileList = []
+                try:
+                    fileObjects = File.objects.filter(project=entry.project)
+                    for file in fileObjects:
+                        if 'image' in mimetypes.guess_type(str(file))[0]:
+                            imageList.append(str(file))
+                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                            fileList.append(str(file))
+                except ObjectDoesNotExist:
+                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                imageList.append(entry.project.thumbnail)
+
+                object = entry.project.__repr__()
+                object['images'] = imageList
+                object['files'] = imageList
+                projectsLiked.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Gelikedte projecten gevonden", "projects": projectsLiked})
         else:
             return JsonResponse({"bool": True, "found": True, "msg": "Je hebt geen projecten geliked", "projects": []})
