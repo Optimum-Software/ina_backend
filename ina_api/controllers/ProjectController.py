@@ -25,14 +25,25 @@ def getProjectById(request, id):
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                     imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                    fileList.append(str(file))
+                    fileList.append(file.__repr__())
         except ObjectDoesNotExist:
             print("OEPS")
         imageList.append(project.thumbnail)
-        object = project.__repr__()
-        object['images'] = imageList
-        object['files'] = imageList
-        projectList.append(object)
+        project = {
+            'id': project.id,
+            'name': project.name,
+            'thumbnail': project.thumbnail,
+            'creator': project.creator.__repr__(),
+            'desc': project.desc,
+            'start_date': project.start_date,
+            'end_date': project.end_date,
+            'created_at': project.created_at,
+            'like_count': project.like_count,
+            'follower_count': project.follower_count,
+            'location': project.location,
+            'images': imageList,
+            'files': fileList,
+        }
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
@@ -52,7 +63,7 @@ def getAllProjects(request):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -79,7 +90,7 @@ def getAllProjectsNewestFirst(request):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -106,7 +117,7 @@ def getAllProjectsOldestFirst(request):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -134,7 +145,7 @@ def getAllProjectsMostLikedFirst(request):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
 
@@ -161,7 +172,7 @@ def getAllProjectsMostFollowsFirst(request):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -392,7 +403,6 @@ def editProject(request):
 
                         tagObject = Tag.objects.get(name=tag)
                         if not Project_Tag.objects.filter(tag=tagObject, project=projectObject).exists():
-                            print("Project_Tag object - " + tagObject.name + " - bestaat nog niet, maar tag wel")
                             projectTag = Project_Tag(tag=tagObject, project=projectObject)
                             projectTag.save()
                             oldTags.remove(tag)
@@ -454,7 +464,7 @@ def searchForProjects(request):
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                   imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
+                  fileList.append(file.__repr__())
             except ObjectDoesNotExist:
               return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
@@ -485,8 +495,8 @@ def getProjectsByTag(request):
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                   imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(str(file))
-            except Exception as e:
+                  fileList.append(file.__repr__())
+            except ObjectDoesNotExist:
               return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(project.thumbnail)
             object = project.__repr__()
@@ -541,7 +551,7 @@ def getSwipeProjects(request, userId):
                     if 'image' in mimetypes.guess_type(str(file))[0]:
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(str(file))
+                        fileList.append(file.__repr__())
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
             imageList.append(entry.thumbnail)

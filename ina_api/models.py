@@ -146,7 +146,7 @@ class File(models.Model):
     def __repr__(self):
         return {
             "id": self.pk,
-            "project": self.project,
+            "project": self.project.__repr__(),
             "path": self.path
         }
 

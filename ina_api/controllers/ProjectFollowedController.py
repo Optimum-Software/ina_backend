@@ -9,7 +9,6 @@ from rest_framework.decorators import api_view
 from django.core import serializers
 import mimetypes
 
-
 @require_http_methods(['GET'])
 def getProjectFollowedById(request, id):
     try:
@@ -60,7 +59,6 @@ def getAllFollowedProjectsByUserId(request,id):
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
                 imageList.append(entry.project.thumbnail)
-
                 object = entry.project.__repr__()
                 object['images'] = imageList
                 object['files'] = imageList
@@ -72,6 +70,17 @@ def getAllFollowedProjectsByUserId(request,id):
         print(e)
         return JsonResponse({"bool": False, "found": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
 
+@require_http_methods(['GET'])
+@api_view(['GET'])
+def checkIfFollowed(request, userId, projectId):
+    try:
+        try:
+            object = Project_Followed.objects.get(user=User.objects.get(pk=userId), project=Project.objects.get(pk=projectId))
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker volgt dit project wel", "followed": True, "canNotificate": object.canNotificate})
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker volgt dit project niet", "followed": False})
+    except:
+        return JsonResponse({"bool": False, "msg": "Er is iets misgegaan"})
 
 @require_http_methods(['POST'])
 @api_view(['POST'])

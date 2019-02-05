@@ -82,7 +82,6 @@ def getMembersByUserId(request, user_id):
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
                 imageList.append(entry.project.thumbnail)
-
                 object = entry.project.__repr__()
                 object['images'] = imageList
                 object['files'] = imageList
@@ -90,7 +89,8 @@ def getMembersByUserId(request, user_id):
             return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
         else:
             return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten", "projects": []})
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
 
 

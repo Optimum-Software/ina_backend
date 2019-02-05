@@ -131,7 +131,6 @@ def getLikedProjectsByUserId(request, user_id):
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
                 imageList.append(entry.project.thumbnail)
-
                 object = entry.project.__repr__()
                 object['images'] = imageList
                 object['files'] = imageList
