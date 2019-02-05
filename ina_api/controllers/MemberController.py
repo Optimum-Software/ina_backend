@@ -6,6 +6,7 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.core import serializers
+import mimetypes
 
 
 @require_http_methods(['POST'])
@@ -69,12 +70,27 @@ def getMembersByUserId(request, user_id):
         projectsMembered = []
         if (memberList):
             for entry in memberList:
-                projectObject = entry.project.__repr__()
-                projectsMembered.append(projectObject)
+                imageList = []
+                fileList = []
+                try:
+                    fileObjects = File.objects.filter(project=entry.project)
+                    for file in fileObjects:
+                        if 'image' in mimetypes.guess_type(str(file))[0]:
+                            imageList.append(str(file))
+                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                            fileList.append(str(file))
+                except ObjectDoesNotExist:
+                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                imageList.append(entry.project.thumbnail)
+                object = entry.project.__repr__()
+                object['images'] = imageList
+                object['files'] = imageList
+                projectsMembered.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
         else:
             return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten", "projects": []})
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
 
 

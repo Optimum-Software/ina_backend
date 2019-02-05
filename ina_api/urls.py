@@ -80,7 +80,8 @@ urlpatterns = [
     path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
     path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
-    path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"),
+    path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"), #fields: canNotificate, userId, projectId
+    path('checkIfFollowed/<int:userId>/<int:projectId>', ProjectFollowedController.checkIfFollowed, name="checkIfFollowed"),
 
     # PROJECTLIKED
     path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),

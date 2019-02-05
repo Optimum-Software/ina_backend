@@ -39,12 +39,14 @@ def sendMsgToUser(request):
                 payload = {"app_id": appId,
                     "include_player_ids": [deviceObject.device_name],
                     "contents": {"en": "Je hebt nieuwe berichten"},
-                    "headings": {"en": "ina"}}
+                    "headings": {"en": "ina"},
+                    "data": {"type": 0}}
                 req = requests.post("https://onesignal.com/api/v1/notifications", headers=header, data=json.dumps(payload))
                 return JsonResponse({"bool": True, "msg": "Bericht verstuurt"}, safe=True)
             else:
                 return JsonResponse({"bool": False, "msg": "Gebruiker heeft notificaties uitstaan"})
-        except:
+        except Exception as e:
+            print(e)
             return JsonResponse({"bool": False, "msg": "Er is geen device"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Stuur all verplichte velden mee aub: msg"}, safe=True)
