@@ -60,7 +60,8 @@ def getUserSettings(request, id):
             'canNotificate': canNotificate
         }
         return JsonResponse({"bool": True, "msg": "Instellingen opgehaald", "settings": settingsData})
-    except:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "Er ging wat mis met het ophalen van deze instellingen"})
 
 @require_http_methods(['POST'])
