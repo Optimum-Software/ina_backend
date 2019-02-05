@@ -69,7 +69,7 @@ def getAllProjects(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -96,7 +96,7 @@ def getAllProjectsNewestFirst(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -123,7 +123,7 @@ def getAllProjectsOldestFirst(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -151,7 +151,7 @@ def getAllProjectsMostLikedFirst(request):
 
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -178,7 +178,7 @@ def getAllProjectsMostFollowsFirst(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -470,7 +470,7 @@ def searchForProjects(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
@@ -501,7 +501,7 @@ def getProjectsByTag(request):
             imageList.append(project.thumbnail)
             object = project.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except Exception as e:
@@ -558,7 +558,7 @@ def getSwipeProjects(request, userId):
 
             object = entry.__repr__()
             object['images'] = imageList
-            object['files'] = imageList
+            object['files'] = fileList
             returnList.append(object)
 
         return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
