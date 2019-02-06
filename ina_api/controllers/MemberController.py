@@ -61,38 +61,6 @@ def getMembersByProjectId(request, project_id):
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There are no members for this project"}, safe=True)
 
-@require_http_methods(['GET'])
-@api_view(['GET'])
-def getMembersByUserId(request, user_id):
-    try:
-        userObject = User.objects.get(pk=user_id)
-        memberList = Member.objects.filter(user=userObject).all()
-        projectsMembered = []
-        if (memberList):
-            for entry in memberList:
-                imageList = []
-                fileList = []
-                try:
-                    fileObjects = File.objects.filter(project=entry.project)
-                    for file in fileObjects:
-                        if 'image' in mimetypes.guess_type(str(file))[0]:
-                            imageList.append(str(file))
-                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(file.__repr__())
-                except ObjectDoesNotExist:
-                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-                imageList.append(entry.project.thumbnail)
-                object = entry.project.__repr__()
-                object['images'] = imageList
-                object['files'] = fileList
-                projectsMembered.append(object)
-            return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
-        else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je neemt niet deel aan projecten", "projects": []})
-    except Exception as e:
-        print(e)
-        return JsonResponse({"bool": False, "found": False, "msg": "Kon geen deelnemende projecten ophalen"})
-
 
 @require_http_methods(['POST'])
 def createMember(request):

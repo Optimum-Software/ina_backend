@@ -46,7 +46,6 @@ urlpatterns = [
     path('deleteMember', MemberController.deleteMember, name='deleteMember'),
     path('createMember', MemberController.createMember, name='createMember'),
     path('getMembersByProjectId/<int:project_id>', MemberController.getMembersByProjectId, name='getMembersByProjectId'),
-    path('getMembersByUserId/<int:user_id>', MemberController.getMembersByUserId, name='getMembersByUserId'),
     path('checkIfProjectMember/<int:userId>/<int:projectId>', MemberController.checkIfProjectMember, name='checkIfProjectMember'),
 
     #MESSAGE
@@ -74,23 +73,18 @@ urlpatterns = [
     path('getProjectFavoriteById/<int:id>', ProjectFavoriteController.getProjectFavoriteById, name="fileById"),
 
     # PROJECTFOLLOWED
-    path('getProjectFollowedById/<int:id>', ProjectFollowedController.getProjectFollowedById, name="projectFollowedById"),
     path('followProjectById', ProjectFollowedController.followProjectById, name="followProjectById"),
-    path('getAllFollowedProjectsByUserId/<int:id>', ProjectFollowedController.getAllFollowedProjectsByUserId, name="getAllFollowedProjectsByUserId"),
     path('unfollowProjectById', ProjectFollowedController.unfollowProjectById, name="unfollowProjectById"),
     path('setCanNotificate', ProjectFollowedController.setCanNotificate, name="setCanNotificate"), #fields: canNotificate, userId, projectId
     path('checkIfFollowed/<int:userId>/<int:projectId>', ProjectFollowedController.checkIfFollowed, name="checkIfFollowed"),
 
     # PROJECTLIKED
-    path('getProjectLikedById/<int:id>', ProjectLikedController.getProjectLikedById, name="projectLikedById"),
     path('likeProjectById', ProjectLikedController.likeProjectById, name="likeProjectById"),
-    path('getAllLikedProjectsById/<int:id>', ProjectLikedController.getAllLikedProjectsById, name="getAllLikedProjectsById"),
-    path('getLikedProjectsByUserId/<int:user_id>', ProjectLikedController.getLikedProjectsByUserId, name="getLikedProjectsByUserId"),
     path('checkIfProjectLiked/<int:userId>/<int:projectId>', ProjectLikedController.checkIfProjectLiked, name="checkIfProjectLiked"),
     path('unlikeProjectById', ProjectLikedController.unlikeProjectById, name="unlikeProjectById"),
 
     # PROJECTTAG
-    path('getProjectTagById/<int:id>', ProjectTagController.getProjectTagById, name="projectTag"),
+    path('getTagsByProjectId/<int:id>', ProjectTagController.getTagsByProjectId, name="getTagsByProjectId"),
 
     # PROJECTUPDATE
     path('addProjectUpdate', ProjectUpdateController.addUpdate, name="addUpdate"), #fields: project, user, title, content

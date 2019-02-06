@@ -10,20 +10,6 @@ from rest_framework.decorators import api_view
 import mimetypes
 
 
-@require_http_methods(['GET'])
-def getProjectLikedById(request, id):
-    try:
-        projectLikedObject = Project_Liked.objects.get(pk=id)
-        userObject = projectLikedObject.user.__repr__()
-        projectObject = projectLikedObject.project.__repr__()
-        projectLikedJson = serializers.serialize('json', [projectLikedObject, ])
-        return JsonResponse(
-            {"bool": True, "msg": "ProjectLiked bestaat", "projectLiked": projectLikedJson, "user": userObject,
-             "project": projectObject}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectLiked bestaat niet"}, safe=True)
-
-
 @require_http_methods(['POST'])
 @api_view(['POST'])
 def likeProjectById(request):
@@ -81,62 +67,3 @@ def checkIfProjectLiked(request, projectId, userId):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Er ging iets mis"})
-
-@require_http_methods(['GET'])
-def getAllLikedProjectsById(request,id):
-    projectList = []
-    try:
-        user = User.objects.get(pk=id)
-        projectLikes = Project_Liked.objects.filter(user=user)
-        if (projectLikes):
-            for project in projectLikes:
-                fileObject = File.objects.get(project=project)
-                projectList.append({
-                    'id': project.id,
-                    'name': project.name,
-                    'url': fileObject.path,
-                    'desc': project.desc,
-                    'start_date': project.start_date,
-                    'end_date': project.end_date,
-                    'created_at': project.created_at,
-                    'like_count': project.like_count,
-                    'follower_count': project.follower_count,
-                    'location': project.location
-                })
-
-            return JsonResponse({"bool": True, "msg": "Projects found that you liked", "projects": projectList}, safe=True)
-        else:
-            return JsonResponse({"bool": False, "msg": "you have not like any projects"}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "failed to get your likes"}, safe=True)
-
-@require_http_methods(['GET'])
-@api_view(['GET'])
-def getLikedProjectsByUserId(request, user_id):
-    try:
-        userObject = User.objects.get(pk=user_id)
-        likedList = Project_Liked.objects.filter(user=userObject).all()
-        projectsLiked= []
-        if (likedList):
-            for entry in likedList:
-                imageList = []
-                fileList = []
-                try:
-                    fileObjects = File.objects.filter(project=entry.project)
-                    for file in fileObjects:
-                        if 'image' in mimetypes.guess_type(str(file))[0]:
-                            imageList.append(str(file))
-                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(file.__repr__())
-                except ObjectDoesNotExist:
-                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-                imageList.append(entry.project.thumbnail)
-                object = entry.project.__repr__()
-                object['images'] = imageList
-                object['files'] = fileList
-                projectsLiked.append(object)
-            return JsonResponse({"bool": True, "found": True, "msg": "Gelikedte projecten gevonden", "projects": projectsLiked})
-        else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je hebt geen projecten geliked", "projects": []})
-    except:
-        return JsonResponse({"bool": False, "msg": "Kon gelikedte projecten niet ophalen"})
