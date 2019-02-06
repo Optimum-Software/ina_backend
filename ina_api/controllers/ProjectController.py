@@ -601,4 +601,4 @@ def getSwipeProjects(request, userId):
         return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
     except Exception as e:
         print(e)
-        return JsonResponse({"bool": False, "msg": "Er is wat fout gegaan met het ophalen van projecten"})
+        return JsonResponse({"bool": False, "msg": "Er is wat fout gegaan met het ophalen van projecten", "projects": []})
