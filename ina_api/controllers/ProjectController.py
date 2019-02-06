@@ -77,8 +77,6 @@ def getProjectByIdNotLoggedIn(request, projectId):
         except ObjectDoesNotExist:
             return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
 
-        imageList.append(projectObject.thumbnail)
-
         project = projectObject.__repr__()
         project['images'] = imageList
         project['files'] = fileList
@@ -180,8 +178,6 @@ def getProjects(request):
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
 
-            imageList.append(project.thumbnail)
-
             object = project.__repr__()
             object['images'] = imageList
             object['files'] = fileList
@@ -250,8 +246,6 @@ def getProjectsNotLoggedIn(request):
 
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-
-            imageList.append(project.thumbnail)
 
             object = project.__repr__()
             object['images'] = imageList
