@@ -65,6 +65,7 @@ urlpatterns = [
     path('createProject', ProjectController.createProject, name="createProject"),
     path('getSwipeProjects/<int:userId>', ProjectController.getSwipeProjects, name="getSwipeProjects"),
     path('editProject', ProjectController.editProject, name="editProject"),
+    path('deleteProject', ProjectController.deleteProject, name="deleteProject"), #fields: userId, projectId
 
     # PROJECTADMIN
     path('getProjectAdminById/<int:id>', ProjectAdminController.getProjectAdminById, name="projectAdminById"),
