@@ -8,12 +8,15 @@ from ina_api.models import *
 from django.views.decorators.http import require_http_methods
 
 @require_http_methods(['GET'])
-def getProjectTagById(request, id):
+def getTagsByProjectId(request, id):
+    tagList = []
     try:
-        projectTagObject = Project_Tag.objects.get(pk=id)
-        tabObject = projectTagObject.tag.__repr__()
-        projectObject = projectTagObject.project.__repr__()
-        projectTagJson = serializers.serialize('json', [ projectTagObject, ])
-        return JsonResponse({"bool": True, "msg": "ProjectTag bestaat", "projectTag": projectTagJson, "tag": tabObject, "project": projectObject}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "ProjectTag bestaat niet"}, safe=True)
+        projectObject = Project.objects.get(pk=id)
+        projectTagObject = Project_Tag.objects.filter(project=projectObject).all()
+        for projectTag in projectTagObject:
+            tagList.append(projectTag.tag.__repr__())
+
+        return JsonResponse({"bool": True, "msg": "Tags gevonden voor project", "tags": tagList}, safe=True)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Geen tags gevonden voor project"}, safe=True)

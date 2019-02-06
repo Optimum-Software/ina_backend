@@ -66,7 +66,6 @@ def getProjectByIdNotLoggedIn(request, projectId):
         imageList = []
         fileList = []
 
-
         try:
             fileObjects = File.objects.filter(project=projectObject)
             for file in fileObjects:
@@ -129,10 +128,30 @@ def getProjects(request):
         # Case: filter by tag
         elif filterType == 'tag':
             tagObject = Tag.objects.get(name=data['tagName'])
-            allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
-            for id in allProjects:
-                project = Project.objects.get(pk=id)
-                projectObjects.append(project)
+            allProjects = Project_Tag.objects.filter(tag=tagObject)
+            for project_tag in allProjects:
+                projectObjects.append(project_tag.project)
+
+        # Case: get all projects user likes
+        elif filterType == 'user_liked':
+            userObject = User.objects.get(pk=userId)
+            likedList = Project_Liked.objects.filter(user=userObject).all()
+            for entry in likedList:
+                projectObjects.append(entry.project)
+
+        # Case: get all projects user follows
+        elif filterType == 'user_followed':
+            userObject = User.objects.get(pk=userId)
+            projectsFollowed = Project_Followed.objects.filter(user=userObject).all()
+            for entry in projectsFollowed:
+                projectObjects.append(entry.project)
+
+        # Case: get all projects user participates in
+        elif filterType == 'user_member':
+            userObject = User.objects.get(pk=userId)
+            memberList = Member.objects.filter(user=userObject).all()
+            for entry in memberList:
+                projectObjects.append(entry.project)
 
         for project in projectObjects:
             imageList = []
