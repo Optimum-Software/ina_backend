@@ -41,36 +41,6 @@ def followProjectById(request):
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
 
-@require_http_methods(['GET'])
-@api_view(['GET'])
-def getAllFollowedProjectsByUserId(request,id):
-    try:
-        user = User.objects.get(pk=id)
-        projectsFollowed = Project_Followed.objects.filter(user=user).all()
-        projectList = []
-        if (projectsFollowed):
-            for entry in projectsFollowed:
-                imageList = []
-                fileList = []
-                try:
-                    fileObjects = File.objects.filter(project=entry.project)
-                    for file in fileObjects:
-                        if 'image' in mimetypes.guess_type(str(file))[0]:
-                            imageList.append(str(file))
-                        elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(str(file))
-                except ObjectDoesNotExist:
-                    return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-                imageList.append(entry.project.thumbnail)
-                object = entry.project.__repr__()
-                object['images'] = imageList
-                object['files'] = imageList
-                projectList.append(object)
-            return JsonResponse({"bool": True, "found": True, "msg": "Projecten die je volgt.", "projects": projectList}, safe=True)
-        else:
-            return JsonResponse({"bool": True, "found": True, "msg": "Je volgt nog geen projecten", "projects": []}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "found": False, "msg": "Het is is niet gelukt om de resultaten op te halen"}, safe=True)
 
 @require_http_methods(['GET'])
 @api_view(['GET'])
