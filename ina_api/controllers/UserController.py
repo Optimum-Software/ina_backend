@@ -260,4 +260,4 @@ def editOptionalInfo(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon info niet instellen"}, safe=True)
-    return JsonResponse({"bool": True, "msg": "Info voor gebruiker [" + str(data['userId']) + "] ingesteld"})
+    return JsonResponse({"bool": True, "msg": "Gebruiker aangepast"})

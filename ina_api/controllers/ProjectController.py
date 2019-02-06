@@ -33,13 +33,10 @@ def getProjectById(request, userId, projectId):
                     fileList.append(file.__repr__())
 
             if Project_Liked.objects.filter(project=projectObject, user=userId).exists():
-                print("liked true")
                 likedBool = True
             if Project_Followed.objects.filter(project=projectObject, user=userId).exists():
-                print("followed true")
                 followedBool = True
             if Member.objects.filter(project=projectObject, user=userId).exists():
-                print("member true")
                 memberBool = True
 
         except ObjectDoesNotExist:
@@ -87,7 +84,6 @@ def getProjectByIdNotLoggedIn(request, projectId):
         project['member'] = False
 
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
-
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
 
@@ -203,7 +199,6 @@ def getProjectsNotLoggedIn(request):
 
     try:
         projectObjects = []
-
         # Case: get all projects
         if filterType == 'all':
             projectObjects = Project.objects.all()
@@ -344,8 +339,6 @@ def createProject(request):
 
                 except Exception as e:
                     print(e)
-        else:
-            print("er zijn geen bestanden in request.files")
 
         # add Tags
         try:
@@ -353,7 +346,6 @@ def createProject(request):
             for fieldName in request.POST:
                 if "#" in fieldName:
                     tags.append(request.POST.get(fieldName))
-                    print(tags)
             if len(tags) > 0:
                 for tag in tags:
                     if Tag.objects.filter(name=tag).exists():
@@ -366,10 +358,28 @@ def createProject(request):
                         projectTag = Project_Tag(tag=newTag, project=project)
                         projectTag.save()
         except:
-            print("kon tags niet toevoegen")
+            print("oeps")
         return JsonResponse({"bool": True, "msg": "Project aangemaakt", "id": project.pk}, safe=True)
     except Exception as e:
         return JsonResponse({"bool": False, "msg": "Kon project niet aanmaken"}, safe=True)
+
+@require_http_methods(['POST'])
+@api_view(['POST'])
+def deleteProject(request):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+
+        userObject = User.objects.get(pk=data['userId'])
+        projectObject = Project.objects.get(pk=data['projectId'])
+
+        if projectObject.creator == userObject:
+            projectObject.delete()
+            return JsonResponse({"bool": True, "msg": "Project verwijdert", "deleted": True})
+        else:
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker mag heeft geen rechten om dit project te verwijderen", "deleted": False})
+    except Exception as e:
+        print(e) 
+        return JsonResponse({"bool": False, "msg": "Er is iets misgegaan met het project verwijderen"})
 
 
 @require_http_methods(['POST'])
@@ -594,7 +604,6 @@ def getSwipeProjects(request, userId):
             object['followed'] = followedBool
             object['member'] = memberBool
             returnList.append(object)
-
         return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
     except Exception as e:
         print(e)
