@@ -14,49 +14,130 @@ from rest_framework.decorators import api_view
 
 
 @require_http_methods(['GET'])
-def getProjectById(request, id):
+@api_view(['GET'])
+def getProjectById(request, userId, projectId):
     try:
-        project = Project.objects.get(pk=id)
+        projectObject = Project.objects.get(pk=projectId)
         imageList = []
         fileList = []
+        likedBool = False
+        memberBool = False
+        followedBool = False
+
         try:
-            fileObjects = File.objects.filter(project=project)
+            fileObjects = File.objects.filter(project=projectObject)
             for file in fileObjects:
                 if 'image' in mimetypes.guess_type(str(file))[0]:
                     imageList.append(str(file))
                 elif 'video' not in mimetypes.guess_type(str(file))[0]:
                     fileList.append(file.__repr__())
+
+            if Project_Liked.objects.filter(project=projectObject, user=userId).exists():
+                likedBool = True
+            if Project_Followed.objects.filter(project=projectObject, user=userId).exists():
+                followedBool = True
+            if Member.objects.filter(project=projectObject, user=userId).exists():
+                memberBool = True
+
         except ObjectDoesNotExist:
-            print("OEPS")
-        imageList.append(project.thumbnail)
-        project = {
-            'id': project.id,
-            'name': project.name,
-            'thumbnail': project.thumbnail,
-            'creator': project.creator.__repr__(),
-            'desc': project.desc,
-            'start_date': project.start_date,
-            'end_date': project.end_date,
-            'created_at': project.created_at,
-            'like_count': project.like_count,
-            'follower_count': project.follower_count,
-            'location': project.location,
-            'images': imageList,
-            'files': fileList,
-        }
+            return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
+        imageList.append(projectObject.thumbnail)
+
+        project = projectObject.__repr__()
+        project['images'] = imageList
+        project['files'] = fileList
+        project['liked'] = likedBool
+        project['followed'] = followedBool
+        project['member'] = memberBool
+
         return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
 
 
 @require_http_methods(['GET'])
-def getAllProjects(request):
+def getProjectByIdNotLoggedIn(request, projectId):
+    try:
+        projectObject = Project.objects.get(pk=projectId)
+        imageList = []
+        fileList = []
+
+
+        try:
+            fileObjects = File.objects.filter(project=projectObject)
+            for file in fileObjects:
+                if 'image' in mimetypes.guess_type(str(file))[0]:
+                    imageList.append(str(file))
+                elif 'video' not in mimetypes.guess_type(str(file))[0]:
+                    fileList.append(file.__repr__())
+
+        except ObjectDoesNotExist:
+            return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
+        imageList.append(projectObject.thumbnail)
+
+        project = projectObject.__repr__()
+        project['images'] = imageList
+        project['files'] = fileList
+        project['liked'] = False
+        project['followed'] = False
+        project['member'] = False
+
+        return JsonResponse({"bool": True, "msg": "Project bestaat", "project": project}, safe=True)
+    except ObjectDoesNotExist:
+        return JsonResponse({"bool": False, "msg": "Project bestaat niet"}, safe=True)
+
+
+@require_http_methods(['POST'])
+@api_view(['POST'])
+def getProjects(request):
+    data = json.loads(request.body.decode('utf-8'))
+    filterType = data['filter']
+    userId = data['userId']
     projectList = []
     try:
-        projectObjects = Project.objects.all()
+        projectObjects = []
+
+        # Case: get all projects
+        if filterType == 'all':
+            projectObjects = Project.objects.all()
+
+        # Case: newest projects first
+        elif filterType == 'newest_first':
+            projectObjects = Project.objects.order_by('created_at').all()
+
+        # Case: oldest projects first
+        elif filterType == 'oldest_first':
+            projectObjects = Project.objects.order_by('-created_at').all()
+
+        # Case: most liked projects first
+        elif filterType == 'most_liked':
+            projectObjects = Project.objects.order_by('-like_count').all()
+
+        # Case: most followed projects first
+        elif filterType == 'most_followed':
+            projectObjects = Project.objects.order_by('-follower_count').all()
+
+        # Case: most search for projects
+        elif filterType == 'search':
+            projectObjects = Project.objects.filter(name__icontains=data['searchTerm']).all()
+
+        # Case: filter by tag
+        elif filterType == 'tag':
+            tagObject = Tag.objects.get(name=data['tagName'])
+            allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
+            for id in allProjects:
+                project = Project.objects.get(pk=id)
+                projectObjects.append(project)
+
         for project in projectObjects:
             imageList = []
             fileList = []
+            likedBool = False
+            memberBool = False
+            followedBool = False
+
             try:
                 fileObjects = File.objects.filter(project=project)
                 for file in fileObjects:
@@ -64,26 +145,78 @@ def getAllProjects(request):
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
                         fileList.append(file.__repr__())
+
+                if Project_Liked.objects.filter(project=project, user=userId).exists():
+                    likedBool = True
+                if Project_Followed.objects.filter(project=project, user=userId).exists():
+                    followedBool = True
+                if Member.objects.filter(project=project, user=userId).exists():
+                    memberBool = True
+                    print("member true")
+
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
             imageList.append(project.thumbnail)
+
             object = project.__repr__()
             object['images'] = imageList
             object['files'] = fileList
+            object['liked'] = likedBool
+            object['followed'] = followedBool
+            object['member'] = memberBool
             projectList.append(object)
+
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
 
-@require_http_methods(['GET'])
-def getAllProjectsNewestFirst(request):
+@require_http_methods(['POST'])
+def getProjectsNotLoggedIn(request):
+    data = json.loads(request.body.decode('utf-8'))
+    filterType = data['filter']
     projectList = []
+
     try:
-        projectObjects = Project.objects.order_by('created_at').all()
+        projectObjects = []
+        # Case: get all projects
+        if filterType == 'all':
+            projectObjects = Project.objects.all()
+
+            # Case: newest projects first
+        elif filterType == 'newest_first':
+            projectObjects = Project.objects.order_by('created_at').all()
+
+            # Case: oldest projects first
+        elif filterType == 'oldest_first':
+            projectObjects = Project.objects.order_by('-created_at').all()
+
+            # Case: most liked projects first
+        elif filterType == 'most_liked':
+            projectObjects = Project.objects.order_by('-like_count').all()
+
+            # Case: most followed projects first
+        elif filterType == 'most_followed':
+            projectObjects = Project.objects.order_by('-follower_count').all()
+
+            # Case: most search for projects
+        elif filterType == 'search':
+            projectObjects = Project.objects.filter(name__icontains=data['searchTerm']).all()
+
+            # Case: filter by tag
+        elif filterType == 'tag':
+            tagObject = Tag.objects.get(name=data['tagName'])
+            allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
+            for id in allProjects:
+                project = Project.objects.get(pk=id)
+                projectObjects.append(project)
+
+
         for project in projectObjects:
             imageList = []
             fileList = []
+
             try:
                 fileObjects = File.objects.filter(project=project)
                 for file in fileObjects:
@@ -91,95 +224,20 @@ def getAllProjectsNewestFirst(request):
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
                         fileList.append(file.__repr__())
+
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
             imageList.append(project.thumbnail)
-            object = project.__repr__()
-            object['images'] = imageList
-            object['files'] = fileList
-            projectList.append(object)
-        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
-
-
-@require_http_methods(['GET'])
-def getAllProjectsOldestFirst(request):
-    projectList = []
-    try:
-        projectObjects = Project.objects.order_by('-created_at').all()
-        for project in projectObjects:
-            imageList = []
-            fileList = []
-            try:
-                fileObjects = File.objects.filter(project=project)
-                for file in fileObjects:
-                    if 'image' in mimetypes.guess_type(str(file))[0]:
-                        imageList.append(str(file))
-                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(file.__repr__())
-            except ObjectDoesNotExist:
-                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-            imageList.append(project.thumbnail)
-            object = project.__repr__()
-            object['images'] = imageList
-            object['files'] = fileList
-            projectList.append(object)
-        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
-
-
-@require_http_methods(['GET'])
-def getAllProjectsMostLikedFirst(request):
-    projectList = []
-    try:
-        projectObjects = Project.objects.order_by('-like_count').all()
-        for project in projectObjects:
-            imageList = []
-            imageList.append(project.thumbnail)
-            fileList = []
-            try:
-                fileObjects = File.objects.filter(project=project)
-                for file in fileObjects:
-                    if 'image' in mimetypes.guess_type(str(file))[0]:
-                        imageList.append(str(file))
-                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(file.__repr__())
-            except ObjectDoesNotExist:
-                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
 
             object = project.__repr__()
             object['images'] = imageList
             object['files'] = fileList
+            object['liked'] = False
+            object['followed'] = False
+            object['member'] = False
             projectList.append(object)
-        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
 
-
-@require_http_methods(['GET'])
-def getAllProjectsMostFollowsFirst(request):
-    projectList = []
-    try:
-        projectObjects = Project.objects.order_by('-follower_count').all()
-        for project in projectObjects:
-            imageList = []
-            fileList = []
-            try:
-                fileObjects = File.objects.filter(project=project)
-                for file in fileObjects:
-                    if 'image' in mimetypes.guess_type(str(file))[0]:
-                        imageList.append(str(file))
-                    elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                        fileList.append(file.__repr__())
-            except ObjectDoesNotExist:
-                return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-            imageList.append(project.thumbnail)
-            object = project.__repr__()
-            object['images'] = imageList
-            object['files'] = fileList
-            projectList.append(object)
         return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
     except ObjectDoesNotExist:
         return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
@@ -249,8 +307,8 @@ def createProject(request):
                         clip.save_frame('./media/project/' + str(projectId) + '/videoThumbnail_' + file.name + '.jpg',
                                         t=0.00)
                         uploadedThumbnailUrl = (
-                                    '/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20",
-                                                                                                          "") + '.jpg')
+                                '/project/' + str(projectId) + '/videoThumbnail_' + file.name.replace("%20",
+                                                                                                      "") + '.jpg')
                         newThumbnail = File(project=project, path=uploadedThumbnailUrl)
 
                         newThumbnail.save()
@@ -449,66 +507,6 @@ def uploadThumbnailForProject(request):
     return JsonResponse({"bool": True, "msg": "Thumnail geupload"}, safe=True)
 
 
-@require_http_methods(['POST'])
-def searchForProjects(request):
-    data = json.loads(request.body.decode('utf-8'))
-    try:
-        resultList = Project.objects.filter(name__icontains=data['searchTerm']).all()
-        projectList = []
-        for project in resultList:
-            imageList = []
-            fileList = []
-            try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(file.__repr__())
-            except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-            imageList.append(project.thumbnail)
-            object = project.__repr__()
-            object['images'] = imageList
-            object['files'] = fileList
-            projectList.append(object)
-        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except ObjectDoesNotExist:
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
-
-
-
-@require_http_methods(['POST'])
-def getProjectsByTag(request):
-    data = json.loads(request.body.decode('utf-8'))
-    try:
-        tagObject = Tag.objects.get(name=data['tagName'])
-        allProjects = Project_Tag.objects.filter(tag=tagObject).values_list('project', flat=True)
-        projectList = []
-        for id in allProjects:
-            project = Project.objects.get(pk=id)
-            imageList = []
-            fileList = []
-            try:
-              fileObjects = File.objects.filter(project=project)
-              for file in fileObjects:
-                if 'image' in mimetypes.guess_type(str(file))[0]:
-                  imageList.append(str(file))
-                elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                  fileList.append(file.__repr__())
-            except ObjectDoesNotExist:
-              return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
-            imageList.append(project.thumbnail)
-            object = project.__repr__()
-            object['images'] = imageList
-            object['files'] = fileList
-            projectList.append(object)
-        return JsonResponse({"bool": True, "msg": "Projects found", "projects": projectList}, safe=True)
-    except Exception as e:
-        print(e)
-        return JsonResponse({"bool": False, "msg": "There a no projects"}, safe=True)
-
-
 @require_http_methods(['GET'])
 @api_view(['GET'])
 def getSwipeProjects(request, userId):
@@ -518,29 +516,28 @@ def getSwipeProjects(request, userId):
         return JsonResponse({"bool": False, "msg": "Er is geen gebruiker met id [" + str(userId) + "]"})
 
     try:
-        #First get all projects that the user did NOT create
+        # First get all projects that the user did NOT create
         allProjectList = Project.objects.exclude(creator=userObject)
 
-        #Next filter the list on all projects for the which the user is an admin
+        # Next filter the list on all projects for the which the user is an admin
         projectAdminList = Project_Admin.objects.filter(user=userObject)
 
         filteredProjectList = allProjectList
         for project in projectAdminList:
             filteredProjectList = filteredProjectList.exclude(project_admin=project)
 
-        #Next filter the list on all projects that the user has already liked
+        # Next filter the list on all projects that the user has already liked
         likeList = Project_Liked.objects.filter(user=userObject)
 
         secondFilterProjectList = filteredProjectList
         for project in likeList:
             secondFilterProjectList = secondFilterProjectList.exclude(project_liked=project)
 
-        #TODO filter based on tags the user likes
+        # TODO filter based on tags the user likes
         #
         #
         #
         #
-
 
         returnList = []
         for entry in secondFilterProjectList:
@@ -553,15 +550,27 @@ def getSwipeProjects(request, userId):
                         imageList.append(str(file))
                     elif 'video' not in mimetypes.guess_type(str(file))[0]:
                         fileList.append(file.__repr__())
+
+                if Project_Liked.objects.filter(project=project, user=userId).exists():
+                    likedBool = True
+                if Project_Followed.objects.filter(project=project, user=userId).exists():
+                    followedBool = True
+                if Member.objects.filter(project=project, user=userId).exists():
+                    memberBool = True
+
+
             except ObjectDoesNotExist:
                 return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+
             imageList.append(entry.thumbnail)
 
             object = entry.__repr__()
             object['images'] = imageList
             object['files'] = fileList
+            object['liked'] = likedBool
+            object['followed'] = followedBool
+            object['member'] = memberBool
             returnList.append(object)
-
         return JsonResponse({"bool": True, "msg": "Swipe projects opgehaald", "projects": returnList})
     except Exception as e:
         print(e)

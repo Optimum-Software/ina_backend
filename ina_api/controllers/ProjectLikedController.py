@@ -127,13 +127,13 @@ def getLikedProjectsByUserId(request, user_id):
                         if 'image' in mimetypes.guess_type(str(file))[0]:
                             imageList.append(str(file))
                         elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(str(file))
+                            fileList.append(file.__repr__())
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
                 imageList.append(entry.project.thumbnail)
                 object = entry.project.__repr__()
                 object['images'] = imageList
-                object['files'] = imageList
+                object['files'] = fileList
                 projectsLiked.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Gelikedte projecten gevonden", "projects": projectsLiked})
         else:

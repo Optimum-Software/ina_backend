@@ -78,13 +78,13 @@ def getMembersByUserId(request, user_id):
                         if 'image' in mimetypes.guess_type(str(file))[0]:
                             imageList.append(str(file))
                         elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(str(file))
+                            fileList.append(file.__repr__())
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
                 imageList.append(entry.project.thumbnail)
                 object = entry.project.__repr__()
                 object['images'] = imageList
-                object['files'] = imageList
+                object['files'] = fileList
                 projectsMembered.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Deelnemende projecten gevonden", "projects": projectsMembered})
         else:
@@ -131,3 +131,16 @@ def deleteMember(request):
             return JsonResponse({"bool": False, "msg": "Kon deelnemer niet verwijderen"}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "Deelnemer met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
+
+
+@require_http_methods(['GET'])
+@api_view(['GET'])
+def checkIfProjectMember(request, projectId, userId):
+    try:
+        if Member.objects.filter(project=Project.objects.get(pk=projectId), user=User.objects.get(pk=userId)).exists():
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker neemt al deel aan dit project", "member": True})
+        else:
+            return JsonResponse({"bool": True, "msg": "Deze gebruiker neemt nu deel aan dit project", "member": False})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er ging iets mis"})

@@ -34,7 +34,10 @@ def followProjectById(request):
         else:
             projectFollowed = Project_Followed(project=projectObject, user=userObject)
             projectFollowed.save()
-            return JsonResponse({"bool": True, "msg": "Je volgt nu het project"}, safe=True)
+            projectObject.follower_count += 1
+            projectObject.save()
+            followerCount = projectObject.follower_count
+            return JsonResponse({"bool": True, "msg": "Je volgt nu het project", "followerCount": followerCount}, safe=True)
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
 
@@ -55,13 +58,14 @@ def getAllFollowedProjectsByUserId(request,id):
                         if 'image' in mimetypes.guess_type(str(file))[0]:
                             imageList.append(str(file))
                         elif 'video' not in mimetypes.guess_type(str(file))[0]:
-                            fileList.append(str(file))
+                            fileList.append(file.__repr__())
                 except ObjectDoesNotExist:
                     return JsonResponse({"bool": False, "msg": "er is iets misgegaan"})
+                    
                 imageList.append(entry.project.thumbnail)
                 object = entry.project.__repr__()
                 object['images'] = imageList
-                object['files'] = imageList
+                object['files'] = fileList
                 projectList.append(object)
             return JsonResponse({"bool": True, "found": True, "msg": "Projecten die je volgt.", "projects": projectList}, safe=True)
         else:
@@ -93,3 +97,39 @@ def setCanNotificate(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon notificatie niet instellen"})
+
+
+@require_http_methods(['GET'])
+@api_view(['GET'])
+def checkIfProjectFollowed(request, projectId, userId):
+    try:
+        if Project_Followed.objects.filter(project=Project.objects.get(pk=projectId), user=User.objects.get(pk=userId)).exists():
+            return JsonResponse({"bool": True, "msg": "Project wordt al gevolgd door deze gebruiker", "followed": True})
+        else:
+            return JsonResponse({"bool": True, "msg": "Project wordt nog niet gevolgd door deze gebruiker", "followed": False})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Er ging iets mis"})
+
+
+@require_http_methods(['POST'])
+@api_view(['POST'])
+def unfollowProjectById(request):
+    data = json.loads(request.body.decode('utf8'))
+    projectId = data['id']
+    userId = data['userId']
+    try:
+        projectObject = Project.objects.get(pk=projectId)
+        userObject = User.objects.get(pk=userId)
+        if Project_Followed.objects.filter(project=projectObject).exists():
+            Project_Followed.objects.get(project=projectObject, user=userObject).delete()
+            projectObject.follower_count -= 1
+            projectObject.save()
+            follower_count = projectObject.follower_count
+            return JsonResponse({"bool": True, "msg": "Project succesvol ontvolgd", "followerCount": follower_count})
+        else:
+            return JsonResponse({"bool": True, "msg": "Je volgt het project nog niet"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te ontvolgen"})
+
