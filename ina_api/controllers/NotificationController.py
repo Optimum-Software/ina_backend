@@ -35,6 +35,13 @@ def getNotificationByUser(request, id):
 				object['project']['images'] = imageList
 				object['project']['files'] = fileList
 				returnList.append(object)
+			elif noti.type == 2:
+				object = noti.__repr__()
+				object['groupChat']['uid'] = noti.groupChat.name
+				object['groupChat']['title'] = noti.groupChat.name
+				object['groupChat']['chatId'] = noti.groupChat.id
+				returnList.append(object)
+
 		return JsonResponse({"bool": True, "msg": "Meldingen opgehaald", "notifications": returnList})
 	except Exception as e:
 		print(e)

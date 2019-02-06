@@ -300,12 +300,14 @@ class Notification(models.Model):
 
     TYPES = {
         (0, "Chat"),
-        (1, "Project")
+        (1, "Project"),
+        (2, "Group")
     }
 
     type = models.IntegerField(choices=TYPES)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, blank=True, null=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, related_name='project')
+    groupChat = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, related_name='groupChat')
     created_at = models.DateTimeField(default=timezone.now())
     read = models.BooleanField(default=False)
 
@@ -319,6 +321,7 @@ class Notification(models.Model):
             "type": self.type,
             "chat": self.chat.__repr__(),
             "project": self.project.__repr__(),
+            "groupChat": self.groupChat.__repr__(),
             "createdAt": self.created_at,
             "read": self.read,
         }
