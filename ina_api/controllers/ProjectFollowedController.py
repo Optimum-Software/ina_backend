@@ -41,7 +41,6 @@ def followProjectById(request):
     except:
         return JsonResponse({"bool": False, "msg": "volgen is mislukt"}, safe=True)
 
-
 @require_http_methods(['GET'])
 @api_view(['GET'])
 def checkIfFollowed(request, userId, projectId):
@@ -66,7 +65,6 @@ def setCanNotificate(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon notificatie niet instellen"})
-
 
 @require_http_methods(['GET'])
 @api_view(['GET'])
@@ -101,4 +99,3 @@ def unfollowProjectById(request):
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Het is niet gelukt om te ontvolgen"})
-
