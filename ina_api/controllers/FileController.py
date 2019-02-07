@@ -13,7 +13,8 @@ def getFileById(request, id):
     try:
         fileObject = File.objects.get(pk=id).__repr__()
         return JsonResponse({"bool": True, "msg": "File bestaat", "file": fileObject}, safe=True)
-    except ObjectDoesNotExist:
+    except Exception as e:
+        print(e)
         return JsonResponse({"bool": False, "msg": "File bestaat niet"}, safe=True)
 
 @require_http_methods(['POST'])
