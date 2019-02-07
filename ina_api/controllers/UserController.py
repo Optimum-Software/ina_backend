@@ -249,14 +249,34 @@ def uploadFileForProfilePhoto(request):
 def editOptionalInfo(request):
     data = json.loads(request.body.decode('utf-8'))
     try:
-        userObject = User.objects.get(pk=data['userId'])
+        userObject = User.objects.get(pk=request.POST.get('id'))
     except:
-        return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['userId']) + "] bestaat niet"}, safe=True)
+        return JsonResponse({"bool": False, "msg": "Gebruiker met id [" + str(data['id']) + "] bestaat niet"}, safe=True)
     try:
-        userObject.organisation = data['organisation']
-        userObject.function = data['function']
-        userObject.bio = data['bio']
-        userObject.save()
+        if request.POST.get('bio') != '':
+            userObject.bio = request.POST.get('bio')
+            userObject.save()
+        if request.POST.get('organisation') != '':
+            userObject.organisation = request.POST.get('organisation')
+            userObject.save()
+        if request.POST.get('function') != '':
+            userObject.function = request.POST.get('function')
+            userObject.save()
+
+        if len(request.FILES) > 0:
+            for fieldName in request.FILES:
+                file = request.FILES[fieldName]
+                fs = FileSystemStorage('./media/user/' + request.POST.get('id'))
+                filename = fs.save(file.name, file)
+
+                uploadedFileUrl = ('/user/' + request.POST.get('id') + '/' + (filename).replace("%20", ""))
+
+                try:
+                    userObject.profile_photo_path = uploadedFileUrl
+                    userObject.save()
+                except:
+                    return JsonResponse({"bool": False, "msg": "Kon profiel foto niet aanpassen", "file": filename}, safe=True)
+
     except Exception as e:
         print(e)
         return JsonResponse({"bool": False, "msg": "Kon info niet instellen"}, safe=True)
